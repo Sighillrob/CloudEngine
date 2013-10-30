@@ -1,7 +1,7 @@
 CloudEngine
 ===========
 
-Open source backend for mobile
+**Open source backend stack for mobile.**
 
 
 Overview
@@ -43,6 +43,11 @@ Currently some of the services are tightly coupled. CloudEngine uses the excelle
 [gevent-socketio][gevent-socketio] library for implementing real time communication
 channels, which are the basis of current push notifications system. 
 gevent-socketio is the python port of the popular [socket.io][socket.io] library. 
+For storage we use a combination of relational database (MySQL, PostgreSQL) and a
+NoSQL db (Currently mongodb). Ideally, we'd like to move completely to a NoSQL db.
+But we want to leverage a lot of django goodies and there is no elegant way to retain 
+that while migrating to NoSQL. CloudEngine uses [django-rest-framework][django-rest] for providing
+REST interfaces to services.
 
 
 Client libraries
@@ -80,3 +85,4 @@ See the LICENSE file for more info.
 [socket.io]: http://socket.io
 [issue-tracker]: https://github.com/cloudengine/CloudEngine/issues
 [android-sdk]: https://github.com/cloudengine/Android-SDK
+[django-rest]: https://github.com/tomchristie/django-rest-framework
