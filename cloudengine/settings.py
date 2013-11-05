@@ -2,20 +2,17 @@
 
 DEBUG = False
 
-REGISTRATION_OPEN = False      # required for django-registration
-
 TEMPLATE_DEBUG = DEBUG
-
-LOG_FILENAME = ''
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.',
-        'NAME': '',
+        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': '',         # Or path to database file if using sqlite3.
+        # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'HOST': '',          # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '',          # Set to empty string for default.
     }
 }
 
@@ -71,8 +68,11 @@ REST_FRAMEWORK = {
     ]
 }
 
-
+# By default files are uploaded to amazon S3 buckets
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+# The name of the directory that users will upload the files to
+REMOTE_FILES_DIR = 'root'
 
 
 #Azure Credentials
@@ -81,12 +81,11 @@ AZURE_STORAGE_KEY = ''
 AZURE_STORAGE_CONTAINER = ''
 
 
-
 # AWS Credentials
 AWS_ACCESS_KEY_ID = ""
 AWS_SECRET_ACCESS_KEY = ""
 AWS_STORAGE_BUCKET_NAME = ""
-REMOTE_FILES_DIR = ''
+
 
 
 ADMINS = (
@@ -206,11 +205,6 @@ INSTALLED_APPS = (
     'storages',
 )
 
-AUTH_PROFILE_MODULE = "cloudengine.CloudUser"
-
-ACCOUNT_ACTIVATION_DAYS = 7
-
-
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -239,15 +233,6 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler'
         },
 
-        'filelogger': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_FILENAME,
-            'maxBytes': 50000,
-            'backupCount': 2,
-            'formatter': 'verbose',
-
-        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -261,7 +246,7 @@ LOGGING = {
             'propagate': True,
         },
         'cloudengine': {
-            'handlers': ['console', 'filelogger'],
+            'handlers': ['console'],
             'level': 'DEBUG',
         }
     }
