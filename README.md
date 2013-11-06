@@ -17,6 +17,8 @@ building backend mobile services. The core services could be tightly coupled.
 
 Requirements
 =============
+CloudEngine runs only on gunicorn server and hence currently runs only
+on UNIX environments.
 
 * Python (2.7.5+)
 * Django (1.5.4+)
@@ -37,9 +39,9 @@ settings in `cloudengine.settings.py`. Create database tables.
 
 	manage.py syncdb
 	
-Run the server 
+Run the gunicorn server with gevent-socketio worker class 
 
-	manange.py runserver
+	gunicorn_django -w 1 --worker-class socketio.sgunicorn.GeventSocketIOWorker
 	
 	
 Technical Overview
@@ -47,7 +49,8 @@ Technical Overview
 
 CloudEngine is a pure Python django stack. Each backend service is plugged in as django
 app. Each service should be independently pluggable and usable except the core services. 
-Currently some of the services are tightly coupled. CloudEngine uses the excellent
+Currently some of the services are tightly coupled. CloudEngine currently runs on gunicorn
+server and hence runs only on UNIX environments. CloudEngine uses the excellent
 [gevent-socketio][gevent-socketio] library for implementing real time communication
 channels, which are the basis of current push notifications system. 
 gevent-socketio is the python port of the popular [socket.io][socket.io] library. 
