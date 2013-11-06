@@ -19,12 +19,20 @@ Requirements
 =============
 
 * Python (2.7.5+)
-* Django (1.5+)
+* Django (1.5.4+)
+* MongoDB (2.4.6+)
+* MySQL (5.5+)
+
+All the python library dependencies are listed in `requirements.txt`
 
 Installation
 ===============
 
-Clone the project. Configure database and other necessary 
+Clone the project. Install all the required dependencies
+
+	pip install -r requirements.txt
+
+Configure database and other necessary 
 settings in `cloudengine.settings.py`. Create database tables.
 
 	manage.py syncdb
