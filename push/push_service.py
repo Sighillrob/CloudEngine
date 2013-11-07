@@ -70,7 +70,7 @@ class DefaultNamespace(BaseNamespace, UserChannelMixin):
             return auth_id
         # try token authentication
         req = HttpRequest()
-        req.META = self.environ
+        req.META = self.socket.handshake_environ
         return self.perform_authentication(req)
 
     # django-rest-framework doesn't have a explicit API for authentication
