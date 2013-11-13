@@ -22,21 +22,19 @@ class ClassViewTest(TestCase):
         self.dbclient = dbclient
         cur_filepath = os.path.abspath(__file__)
         cur_dir = os.path.dirname(cur_filepath)
-        db = dbclient.testclient
+        db = dbclient.testapp
         for fixture in self.myfixtures:
             new_fixture = os.path.join(cur_dir, "fixtures", fixture)
             f = open(new_fixture)
-            colls = json.loads(f.read())
-            self.loaded_data = colls
-        # the database is named after the username. 
-            # in this case, testclient
-            for coll in colls:
-                collection = db[coll]
-                objs = colls[coll]
+            collections = json.loads(f.read())
+            self.loaded_data = collections
+            for collection in collections:
+                collection = db[collection]
+                objs = collections[collection]
                 collection.insert(objs)
                 
     def tearDown(self):
-        self.dbclient.drop_database("testclient")
+        self.dbclient.drop_database("testapp")
         
     def test_get_all_classes(self):
         response = self.client.get('/api/v1/classes/')

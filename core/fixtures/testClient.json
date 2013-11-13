@@ -18,29 +18,10 @@
     }
 },
 {
-    "pk": 64, 
-    "model": "cloudengine.clouduser", 
-    "fields": {
-        "city": "", 
-        "country": "", 
-        "organization": "", 
-        "address": ""
-    }
-},
-{
-    "pk": 57, 
-    "model": "registration.registrationprofile", 
-    "fields": {
-        "activation_key": "ALREADY_ACTIVATED", 
-        "user": 64
-    }
-},
-{
     "pk": "e9d1ea7a537ec1575c30a43a68a1239f80f4a9b8", 
     "model": "cloudengine.cloudapp", 
     "fields": {
         "created": "2013-10-13T13:16:19Z", 
-        "user": 64, 
         "name": "TestApp"
     }
 }
