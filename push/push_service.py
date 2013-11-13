@@ -2,7 +2,10 @@ import logging
 from django.http import HttpRequest
 from rest_framework.views import APIView
 from socketio.namespace import BaseNamespace
+from rest_framework import HTTP_HEADER_ENCODING
+from core.models import CloudApp
 
+all_channels = {}
 
 # This mixin creates a separate channel for each user/app
 class UserChannelMixin(object):
@@ -42,14 +45,25 @@ class DefaultNamespace(BaseNamespace, UserChannelMixin):
     def initialize(self):
         self.logger = logging.getLogger("cloudengine")
         auth_id = self.authenticate_request()
-        if auth_id:
+        environ = self.socket.handshake_environ
+        app_id = environ.get('HTTP_APPID', b'')
+        if isinstance(app_id, str):
+            # Work around django test client oddness
+            app_id = app_id.encode(HTTP_HEADER_ENCODING)
+            
+        if auth_id and app_id:
             self.logger.info("initializing socketio for user %s" % auth_id)
             self.lift_acl_restrictions()
-            self.channel = auth_id
+            app = CloudApp.objects.get(pk=app_id)
+            self.channel = app.name
             #self._objects[id(self)] = self
             # currently every user is automatically subscribed to the default
             # channel
             self.subscribe(self.channel)
+            if self.channel in all_channels.keys():
+                all_channels[self.channel].append(self.socket)
+            else:
+                all_channels[self.channel] = [self.socket]
             self.emit('connect')
         else:
             self.logger.info("user not authenticated in socketio:initlaize")
@@ -98,3 +112,30 @@ class DefaultNamespace(BaseNamespace, UserChannelMixin):
         self.emit_to_channel(self.channel, "push", message)
         #self.emit( 'push', message)
         return True
+
+
+
+def get_subscriber_count(channel):
+    count = 0
+    try:
+        subscribers = all_channels[channel]
+        count = len(subscribers)
+    except KeyError:
+        pass    
+    return count
+
+        
+def push_to_channel(channel, message):
+    pkt = dict(type="event",
+                   name="push",
+                   args=(message, ),
+                   )
+    try:
+        subscribers = all_channels[channel]
+    except KeyError:
+        return
+    for subscriber in subscribers:
+        subscriber.send_packet(pkt)
+                
+            
+            
