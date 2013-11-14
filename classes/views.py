@@ -4,13 +4,15 @@ import logging
 import json
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from core.cloudapi_view import CloudAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from core.cloudapi_view import CloudAPIView
 
 logger = logging.getLogger("cloudengine")
 
+
 class AppClassesView(CloudAPIView):
+
     def get(self, request):
         app = request.META['app']
         db_name = app.name
@@ -55,13 +57,13 @@ class ClassView(CloudAPIView):
             return Response({'detail': 'App id not provided'}, status=401)
 
         client = MongoClient()
-        
+
         db_name = app.name
         db = client[db_name]
         if cls in db.collection_names():
             collection = db[cls]
             collection.remove()
-            
+
         return Response()
 
     def post(self, request, cls):
@@ -74,11 +76,11 @@ class ClassView(CloudAPIView):
         db = client[db_name]
         collection = db[cls]
         try:
-            logger.debug("request body recieved: %s"%request.body)
+            logger.debug("request body recieved: %s" % request.body)
             new_obj = json.loads(request.body)
-                
+
         except Exception, e:
-            logger.error("Unable to decode object. Error: %s"%str(e))
+            logger.error("Unable to decode object. Error: %s" % str(e))
             return Response({"detail": "Invalid object."},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
@@ -93,9 +95,9 @@ class ObjectView(CloudAPIView):
         if not app:
             # We should not have reached here anyway
             return Response({'detail': 'App id not provided'}, status=401)
-        
+
         client = MongoClient()
-        db_name =  app.name
+        db_name = app.name
         db = client[db_name]
         collection = db[cls]
         obj = collection.find_one({"_id": ObjectId(objid)})
@@ -116,9 +118,9 @@ class ObjectView(CloudAPIView):
         if not app:
             # We should not have reached here anyway
             return Response({'detail': 'App id not provided'}, status=401)
-        
+
         client = MongoClient()
-        db_name =  app.name
+        db_name = app.name
         db = client[db_name]
         collection = db[cls]
         try:
@@ -136,7 +138,7 @@ class ObjectView(CloudAPIView):
         if not app:
             # We should not have reached here anyway
             return Response({'detail': 'App id not provided'}, status=401)
-        
+
         client = MongoClient()
         db_name = app.name
         db = client[db_name]

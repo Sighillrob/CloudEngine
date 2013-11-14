@@ -10,14 +10,14 @@ from push.models import PushNotification
 from push.push_service import DefaultNamespace
 
 
-
 def socketio_view(request):
     socketio_manage(
         request.environ, {'/default': DefaultNamespace}, request=request)
     return HttpResponse()
 
-    
+
 class PushSubscribers(CloudAPIView):
+
     def get(self, request):
         app = request.META['app']
         channel = app.name
@@ -25,9 +25,8 @@ class PushSubscribers(CloudAPIView):
         return Response({"result": count})
 
 
-
 class PushAPIView(CloudAPIView):
-        
+
     def post(self, request):
         app = request.META['app']
         user = request.user.username
@@ -41,11 +40,10 @@ class PushAPIView(CloudAPIView):
             try:
                 message = request.POST['message']
             except Exception:
-                return Response("Invalid request. Check request format", 
-                            status=status.HTTP_400_BAD_REQUEST)
-        
+                return Response("Invalid request. Check request format",
+                                status=status.HTTP_400_BAD_REQUEST)
+
         push_to_channel(channel, message)
         notification = PushNotification(app=app, num_subscribers=count)
         notification.save()
         return Response({"result": count})
-

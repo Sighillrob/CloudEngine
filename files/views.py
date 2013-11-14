@@ -15,21 +15,20 @@ from cloudengine.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, \
     AWS_STORAGE_BUCKET_NAME, REMOTE_FILES_DIR
 
 
-
 logger = logging.getLogger("cloudengine")
 
-MAX_FILESIZE = 2*1024*1024      # 2 MB
+MAX_FILESIZE = 2 * 1024 * 1024      # 2 MB
 
 AWS_URL_EXPIRY = 3600 * 24 * 265 * \
     20         # won't expire for a very long time
 
 
 class FileListView(CloudAPIView):
-    
+
     def get(self, request):
         app = request.META.get('app', None)
         if not app:
-            return Response({"detail": "Invalid app id provided"}, 
+            return Response({"detail": "Invalid app id provided"},
                             status=400)
         cloudapp = CloudApp.objects.get(name=app.name)
         result = []
@@ -43,7 +42,7 @@ class FileListView(CloudAPIView):
         except CloudFile.DoesNotExist, e:
             pass
         return Response({"result": result})
-        
+
 
 # make sure filename in the newly generated url (before query string) does
 # end with trailing slash
@@ -52,10 +51,11 @@ class FileView(CloudAPIView):
 
     def post(self, request, filename):
         content_length = request.META.get("CONTENT_LENGTH", 0)
-        content_length = int(content_length)        
+        content_length = int(content_length)
         body = request.body
         if (content_length > MAX_FILESIZE) or (len(body) > MAX_FILESIZE):
-            logger.error("File too large. content_length %d size %d"%(content_length, len(body)))
+            logger.error("File too large. content_length %d size %d" %
+                         (content_length, len(body)))
             return Response({'detail': 'File size too large'}, status=400)
 
         app = request.META.get('app', None)
@@ -82,19 +82,19 @@ class FileView(CloudAPIView):
             AWS_URL_EXPIRY, "GET", bucket=AWS_STORAGE_BUCKET_NAME, key=key)
         new_file.url = url
         new_file.save()
-        
+
         return Response({"url": url}, status=201)
 
 
-
-#This view doesn't have any authentication. 
+# This view doesn't have any authentication.
 # Please ensure authentication using django auth, etc.
 class FileBrowserView(View):
 
     def get(self, request, *args, **kwargs):
         form = FileUploadForm()
         c = {"form": form, "files_list": CloudFile.objects.all()}
-        return render(request, self.template_name, c, context_instance=RequestContext(request))
+        return render(request, self.template_name, c,
+                      context_instance=RequestContext(request))
 
     def post(self, request, *args, **kwargs):
         # validate app name
@@ -108,16 +108,16 @@ class FileBrowserView(View):
             error_msg = "Please select an app before uploading file."
         elif myfile.size > MAX_FILESIZE:
             error_msg = "File too big. Max. file limit is 2 MB"
-                
+
         if error_msg:
             c = {"form": FileUploadForm(), "error": error_msg}
-            return render(request, 
-                          self.template_name, 
-                          c, 
+            return render(request,
+                          self.template_name,
+                          c,
                           context_instance=RequestContext(request))
-        
+
         filename = self.clean_filename(myfile.name)
-        new_file = CloudFile(name= filename, app=appobj)
+        new_file = CloudFile(name=filename, app=appobj)
 
         conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
         while True:
@@ -135,25 +135,18 @@ class FileBrowserView(View):
             AWS_URL_EXPIRY, "GET", bucket=AWS_STORAGE_BUCKET_NAME, key=key)
         new_file.url = url
         new_file.save()
-        c = {"form": FileUploadForm(), "success": "File uploaded successfully!"}
-        return render(request, 
-                      self.template_name, 
-                      c, 
+        c = {
+            "form": FileUploadForm(), "success": "File uploaded successfully!"}
+        return render(request,
+                      self.template_name,
+                      c,
                       context_instance=RequestContext(request))
-        
-        
+
     def is_validapp(self, app):
         try:
-            return CloudApp.objects.get(name= app)
+            return CloudApp.objects.get(name=app)
         except CloudApp.DoesNotExist:
             return False
-        
-        
+
     def clean_filename(self, name):
         return name.replace(' ', '-')
-
-
-
-
-
-

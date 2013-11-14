@@ -6,12 +6,15 @@ TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.',
         'NAME': '',         # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
-        'HOST': '',          # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        # Empty for localhost through domain sockets or
+        #'127.0.0.1' for localhost through TCP.
+        'HOST': '',
         'PORT': '',          # Set to empty string for default.
     }
 }
@@ -41,7 +44,8 @@ SECRET_KEY = '-b5$a+_g%(no-@y7uu3syl2))%!)2ywx%!42gv4m)#n64e8@hw'
 
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Put strings here, like "/home/html/django_templates"
+    # or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     '',
@@ -75,7 +79,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 REMOTE_FILES_DIR = 'root'
 
 
-#Azure Credentials
+# Azure Credentials
 AZURE_STORAGE_ACCOUNT = ''
 AZURE_STORAGE_KEY = ''
 AZURE_STORAGE_CONTAINER = ''
@@ -85,7 +89,6 @@ AZURE_STORAGE_CONTAINER = ''
 AWS_ACCESS_KEY_ID = ""
 AWS_SECRET_ACCESS_KEY = ""
 AWS_STORAGE_BUCKET_NAME = ""
-
 
 
 ADMINS = (

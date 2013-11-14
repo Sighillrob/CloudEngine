@@ -8,6 +8,8 @@ from core.models import CloudApp
 all_channels = {}
 
 # This mixin creates a separate channel for each user/app
+
+
 class UserChannelMixin(object):
 
     def __init__(self, *args, **kwargs):
@@ -27,7 +29,8 @@ class UserChannelMixin(object):
         return self.ns_name + '_' + channel
 
     def emit_to_channel(self, channel, event, *args):
-        """This is sent to all subscribers of the channel (in this particular Namespace)"""
+        """This is sent to all subscribers of the channel
+            in this namespace """
         pkt = dict(type="event",
                    name=event,
                    args=args,
@@ -36,7 +39,8 @@ class UserChannelMixin(object):
         for sessid, socket in self.socket.server.sockets.iteritems():
             if 'channels' not in socket.session:
                 continue
-            if channel_name in socket.session['channels'] and self.socket != socket:
+            channels = socket.session['channels']
+            if channel_name in channels and self.socket != socket:
                 socket.send_packet(pkt)
 
 
@@ -50,7 +54,7 @@ class DefaultNamespace(BaseNamespace, UserChannelMixin):
         if isinstance(app_id, str):
             # Work around django test client oddness
             app_id = app_id.encode(HTTP_HEADER_ENCODING)
-            
+
         if auth_id and app_id:
             self.logger.info("initializing socketio for user %s" % auth_id)
             self.lift_acl_restrictions()
@@ -114,28 +118,24 @@ class DefaultNamespace(BaseNamespace, UserChannelMixin):
         return True
 
 
-
 def get_subscriber_count(channel):
     count = 0
     try:
         subscribers = all_channels[channel]
         count = len(subscribers)
     except KeyError:
-        pass    
+        pass
     return count
 
-        
+
 def push_to_channel(channel, message):
     pkt = dict(type="event",
-                   name="push",
-                   args=(message, ),
-                   )
+               name="push",
+               args=(message, ),
+               )
     try:
         subscribers = all_channels[channel]
     except KeyError:
         return
     for subscriber in subscribers:
         subscriber.send_packet(pkt)
-                
-            
-            

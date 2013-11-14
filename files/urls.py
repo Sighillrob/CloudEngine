@@ -8,7 +8,8 @@ from files.views import FileBrowserView
 urlpatterns = patterns('',
                        # Examples:
                        #url(r'^$', FileList.as_view(), name="files-app-home"),
-                       # todo: the regex decides the allowed filenames. standardize
+                       # todo: the regex decides the allowed filenames.
+                       # standardize filenames
                        # todo: add testcases for all possible filenames
                        url(r'^$', FileBrowserView.as_view(),
                            name='files-browser'),

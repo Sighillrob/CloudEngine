@@ -4,16 +4,16 @@ from push.views import PushAPIView, PushSubscribers
 
 urlpatterns = patterns('',
                        url(
-                           r'^$', 
-                           PushAPIView.as_view(), 
+                           r'^$',
+                           PushAPIView.as_view(),
                            name='push-api-view'
-                           ),
-                       
+                       ),
+
                        url(
-                           r'^subscribers/$', 
-                           PushSubscribers.as_view(), 
+                           r'^subscribers/$',
+                           PushSubscribers.as_view(),
                            name='push-subscribers'
-                           ),
+                       ),
                        )
 
 

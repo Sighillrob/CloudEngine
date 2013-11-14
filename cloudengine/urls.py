@@ -19,7 +19,8 @@ urlpatterns = patterns(
     url(r'^myaccount/push/', include('push.urls')),
     url(r'^myaccount/files/', include('files.urls')),
 
-    url(r'^myaccount/keys/$', AccountKeysView.as_view(), name='myaccount-keys'),
+    url(r'^myaccount/keys/$',
+        AccountKeysView.as_view(), name='myaccount-keys'),
 
-    
-    )
+
+)

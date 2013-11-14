@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import  CloudApp
+from core.models import CloudApp
 from cloudengine.settings import REMOTE_FILES_DIR
 
 

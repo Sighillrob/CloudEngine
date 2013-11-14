@@ -29,5 +29,3 @@ class RequireLoginMiddleware(object):
 
         # Explicitly return None for all non-matching requests
         return None
-    
-    

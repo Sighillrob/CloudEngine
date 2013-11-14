@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from rest_framework.authtoken.models import Token
 
+
 class CloudApp(models.Model):
     name = models.CharField(max_length=20, unique=True)
     key = models.CharField(max_length=40, primary_key=True)
@@ -21,11 +22,10 @@ class CloudApp(models.Model):
         unique = uuid.uuid4()
         return hmac.new(unique.bytes, digestmod=sha1).hexdigest()
 
-        
+
 class CloudAPI(models.Model):
     time = models.DateTimeField()
     api = models.CharField(max_length=200)
-
 
 
 @receiver(post_save, sender=User)

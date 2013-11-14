@@ -17,10 +17,10 @@ import os
 import sys
 
 abs_path = os.path.abspath(__file__)
-cur_dir = os.path.dirname(abs_path) 
+cur_dir = os.path.dirname(abs_path)
 
 if cur_dir not in sys.path:
-	sys.path.append(os.path.join(cur_dir,".."))
+    sys.path.append(os.path.join(cur_dir, ".."))
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cloudengine.settings")
 
