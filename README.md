@@ -39,9 +39,10 @@ settings in `cloudengine.settings.py`. Create database tables.
 
 	manage.py syncdb
 	
-Run the gunicorn server with gevent-socketio worker class 
+Run the gunicorn server with gevent-socketio worker class. Add the project directory 
+to python path
 
-	gunicorn_django -w 1 --worker-class socketio.sgunicorn.GeventSocketIOWorker
+	gunicorn_django -w 1 --pythonpath . --worker-class socketio.sgunicorn.GeventSocketIOWorker
 	
 	
 Technical Overview
