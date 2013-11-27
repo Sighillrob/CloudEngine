@@ -42,7 +42,9 @@ settings in `cloudengine.settings.py`. Create database tables.
 Run the gunicorn server with gevent-socketio worker class. Add the project directory 
 to python path
 
-	gunicorn_django -w 1 --pythonpath . --worker-class socketio.sgunicorn.GeventSocketIOWorker
+	gunicorn -w 1 --pythonpath .  \
+	--worker-class socketio.sgunicorn.GeventSocketIOWorker  \
+	cloudengine.wsgi:application
 	
 	
 Technical Overview
