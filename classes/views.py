@@ -84,6 +84,12 @@ class ClassView(CloudAPIView):
             return Response({"detail": "Invalid object."},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
+        if "_id" in new_obj.keys():
+            return Response({
+                    "detail": "Invalid object. _id is a reserved field"},
+                    status=status.HTTP_400_BAD_REQUEST
+                                )
+            
         objid = collection.insert(new_obj)
         return Response({"_id": str(objid)}, status=201)
 
@@ -129,8 +135,14 @@ class ObjectView(CloudAPIView):
             return Response({"detail": "Invalid object id"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
+        if "_id" in obj.keys():
+            return Response({
+                    "detail": "Invalid object. _id is a reserved field"},
+                    status=status.HTTP_400_BAD_REQUEST
+                                )
+            
         collection.update({"_id": ObjectId(objid)},
-                          {"$set": obj})               # set multi = true??
+                          {"$set": obj})               
         return Response()
 
     def delete(self, request, cls, objid):
