@@ -15,8 +15,6 @@ urlpatterns = patterns(
 
     url(r'^socket.io/', 'push.views.socketio_view'),
     url(r'^api/v1/', include('cloudengine.api_v1_urls')),
-    url(r'^myaccount/classes/', include('classes.urls')),
-    url(r'^myaccount/push/', include('push.urls')),
     url(r'^myaccount/files/', include('files.urls')),
 
     url(r'^myaccount/keys/$',
