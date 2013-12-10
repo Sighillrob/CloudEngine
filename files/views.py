@@ -84,6 +84,20 @@ class FileView(CloudAPIView):
         new_file.save()
 
         return Response({"url": url}, status=201)
+    
+    def delete(self, request, filename):
+        conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+        app = request.META.get('app', None)
+        if not app:
+            # We should not have reached here anyway
+            return Response({'detail': 'App id not provided'}, status=401)
+        try:
+            fileobj = CloudFile.objects.get(name=filename, app=app)
+        except CloudFile.DoesNotExist:
+            return Response({'detail': 'File does not exist'}, status=401)
+        fileobj.content.delete()
+        fileobj.delete()
+        return Response()
 
 
 # This view doesn't have any authentication.
