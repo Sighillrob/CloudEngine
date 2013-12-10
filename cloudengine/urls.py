@@ -8,7 +8,8 @@ admin.autodiscover()
 urlpatterns = patterns(
     '',
     # Examples:
-    url(r'^', include(admin.site.urls)),
+    url(r'^$', 'core.views.index'),
+    url(r'^admin/', include(admin.site.urls)),
 
     url(r'^api-auth/', include(
         'rest_framework.urls', namespace='rest_framework')),
@@ -16,9 +17,7 @@ urlpatterns = patterns(
     url(r'^socket.io/', 'push.views.socketio_view'),
     url(r'^api/v1/', include('cloudengine.api_v1_urls')),
     url(r'^myaccount/files/', include('files.urls')),
-
     url(r'^myaccount/keys/$',
         AccountKeysView.as_view(), name='myaccount-keys'),
-
 
 )

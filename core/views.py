@@ -3,7 +3,7 @@ from core.models import CloudApp
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from django.shortcuts import redirect
 
 # View for creating new apps
 class AppView(APIView):
@@ -40,3 +40,7 @@ class AccountKeysView(TemplateView):
         except Token.DoesNotExist, e:
             context['api_key'] = ''
         return context
+
+
+def index(request):
+    return redirect('/admin/')
