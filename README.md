@@ -18,7 +18,8 @@ building backend mobile services. The core services could be tightly coupled.
 Requirements
 =============
 CloudEngine runs only on gunicorn server and hence currently runs only
-on UNIX environments.
+on UNIX environments. For development purposes, you can use django's builtin webserver
+and run the stack on Windows as well.
 
 * Python (2.7.5+)
 * Django (1.5.4+)
@@ -30,7 +31,13 @@ All the python library dependencies are listed in `requirements.txt`
 Installation
 ===============
 
-Clone the project. Install all the required dependencies
+Clone the project. Create a virtualenv namespace and activate it.
+
+	virtualenv cloudengine-site
+	cd cloudengine-site
+	source bin/activate
+
+Install all the required dependencies
 
 	pip install -r requirements.txt
 
@@ -46,7 +53,13 @@ to python path
 	--worker-class socketio.sgunicorn.GeventSocketIOWorker  \
 	cloudengine.wsgi:application
 	
+On development environments run the django server,
+
+	manage.py runserver
 	
+Please note the development server doesn't support SocketIO hence you can't test 
+push notifications locally.
+
 Technical Overview
 ====================
 
