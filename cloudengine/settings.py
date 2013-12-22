@@ -72,6 +72,8 @@ REST_FRAMEWORK = {
     ]
 }
 
+EMAIL_VERIFICATION_DAYS = 7
+
 # By default files are uploaded to amazon S3 buckets
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
@@ -206,6 +208,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'storages',
+    'users',
 )
 
 # A sample logging configuration. The only tangible logging
