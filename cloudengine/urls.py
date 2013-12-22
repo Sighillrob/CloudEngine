@@ -19,5 +19,7 @@ urlpatterns = patterns(
     url(r'^myaccount/files/', include('files.urls')),
     url(r'^myaccount/keys/$',
         AccountKeysView.as_view(), name='myaccount-keys'),
+    url(r'^apps/(?P<app_name>[a-zA-Z0-9]+)/verify_email/$', 
+        'users.views.verify_email'),
 
 )
