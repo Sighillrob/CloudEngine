@@ -21,6 +21,9 @@ class CloudApp(models.Model):
     def generate_key(self):
         unique = uuid.uuid4()
         return hmac.new(unique.bytes, digestmod=sha1).hexdigest()
+    
+    def __str__(self):
+        return unicode(self.name)
 
 
 class CloudAPI(models.Model):
@@ -34,7 +37,6 @@ class AppSettings(models.Model):
     
     def __str__(self):
         return unicode(self.app)    
-
 
 @receiver(post_save, sender=User)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
