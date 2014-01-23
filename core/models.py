@@ -21,12 +21,22 @@ class CloudApp(models.Model):
     def generate_key(self):
         unique = uuid.uuid4()
         return hmac.new(unique.bytes, digestmod=sha1).hexdigest()
+    
+    def __str__(self):
+        return unicode(self.name)
 
 
 class CloudAPI(models.Model):
     time = models.DateTimeField()
     api = models.CharField(max_length=200)
 
+
+class AppSettings(models.Model):
+    app = models.OneToOneField(CloudApp)
+    verify_emails = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return unicode(self.app)    
 
 @receiver(post_save, sender=User)
 def create_auth_token(sender, instance=None, created=False, **kwargs):

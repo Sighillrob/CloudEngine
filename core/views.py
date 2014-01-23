@@ -3,7 +3,9 @@ from core.models import CloudApp
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.shortcuts import redirect
+from django.shortcuts import render_to_response
+from django.core.urlresolvers import reverse
+from registration.backends.simple.views import RegistrationView
 
 # View for creating new apps
 class AppView(APIView):
@@ -43,4 +45,10 @@ class AccountKeysView(TemplateView):
 
 
 def index(request):
-    return redirect('/admin/')
+    context = {'user': request.user}
+    return render_to_response("index.html", context)
+
+class MyRegistrationView(RegistrationView):
+    
+    def get_success_url(self, *args, **kwargs):
+        return reverse('index')

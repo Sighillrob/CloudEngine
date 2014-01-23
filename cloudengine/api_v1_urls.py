@@ -8,5 +8,6 @@ urlpatterns = patterns('',
                        url(r'^push/', include('push.api_v1_urls')),
                        url(r'^apps/(?P<name>[a-zA-Z0-9]+)/$',
                            AppView.as_view()),
-                       url(r'^apps/$', AppListView.as_view())
+                       url(r'^apps/$', AppListView.as_view()),
+                       url(r'^users/', include('users.api_v1_urls')),
                        )
