@@ -2,58 +2,38 @@
 
 import logging
 import json
-<<<<<<< HEAD
-from pymongo import MongoClient
-from bson.objectid import ObjectId
-from rest_framework.response import Response
-from rest_framework import status
-from core.cloudapi_view import CloudAPIView
-=======
-import csv
-import cStringIO as StringIO
 #from rest_framework.views import APIView
 from core.cloudapi_view import CloudAPIView
-from core.models import CloudApp
 from rest_framework.response import Response
 from rest_framework import status
-from django.views.generic import TemplateView, View
-from django.shortcuts import  redirect
-from django.http import HttpResponse
-from classes.forms import FileUploadForm
 from manager import ClassesManager
-from classes.utils import validate_db_name
-from classes.csv_unicode import DictWriter
->>>>>>> 14181f4... order query results in ascending/descending manner
+
 
 logger = logging.getLogger("cloudengine")
 
+manager = ClassesManager()
 
 class AppClassesView(CloudAPIView):
-
+    
     def get(self, request):
-        app = request.META['app']
-        db_name = app.name
-        client = MongoClient()
-        db = client[db_name]
-        app_classes = db.collection_names(include_system_collections=False)
+        app = request.META.get('app',"")
+        if not app:
+            return Response({'detail': 'App id not provided'}, 
+                                    status=401)
+        app_classes = manager.get_classes(app.name)
         return Response({"result": app_classes})
 
 
 class ClassView(CloudAPIView):
 
-<<<<<<< HEAD
-=======
     DEFAULT_QUERY = '{}'
 
->>>>>>> 14181f4... order query results in ascending/descending manner
     def get(self, request, cls):
-        app = request.META['app']
-        db_name = app.name
-        client = MongoClient()
-        db = client[db_name]
-        collection = db[cls]
+        app = request.META.get('app', None)
+        if not app:
+            return Response({'detail': 'App id not provided'}, status=400)
         # Django automatically urldecodes query string
-        query_str = request.GET.get('query', '{}')
+        query_str = request.GET.get('query', self.DEFAULT_QUERY)
         logger.info("query string received: %s" % query_str)
         try:
             # urlparse the query
@@ -62,8 +42,6 @@ class ClassView(CloudAPIView):
             return Response({"detail": "Invalid query"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
-<<<<<<< HEAD
-=======
         
         
         try:
@@ -80,83 +58,57 @@ class ClassView(CloudAPIView):
         except Exception, e:
             order_by = order = None
         try:
-            res = manager.get_class(db_name, app, cls, query, order_by, order)
+            res = manager.get_class(app.name, cls, query, order_by, order)
         except Exception, e:
             return Response({'detail': str(e)},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             exception=True)
         return Response({"result": res})
->>>>>>> 14181f4... order query results in ascending/descending manner
-
-        cursor = collection.find(query)      # app_id is used only by server
-        res = [doc for doc in cursor]
-
-        for doc in res:
-            objid = doc["_id"]
-            doc["_id"] = str(objid)
-
-        return Response({"result": res})
 
     def delete(self, request, cls):
         app = request.META.get('app', None)
         if not app:
-            # We should not have reached here anyway
-            return Response({'detail': 'App id not provided'}, status=401)
-
-        client = MongoClient()
-
-        db_name = app.name
-        db = client[db_name]
-        if cls in db.collection_names():
-            collection = db[cls]
-            collection.remove()
-
+            return Response({'detail': 'App id not provided'}, status=400)
+        manager.delete_class( app.name, cls)
         return Response()
 
     def post(self, request, cls):
         app = request.META.get('app', None)
         if not app:
-            # We should not have reached here anyway
-            return Response({'detail': 'App id not provided'}, status=401)
-        client = MongoClient()
-        db_name = app.name
-        db = client[db_name]
-        collection = db[cls]
+            return Response({'detail': 'App id not provided'}, status=400)
         try:
-            logger.debug("request body recieved: %s" % request.body)
+            logger.debug("request body recieved: %s"%request.body)
             new_obj = json.loads(request.body)
-
         except Exception, e:
-            logger.error("Unable to decode object. Error: %s" % str(e))
+            logger.error("Unable to decode object. Error: %s"%str(e))
             return Response({"detail": "Invalid object."},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
-        if "_id" in new_obj.keys():
+        try:
+            objid = manager.add_object(app.name, cls, new_obj)
+        except Exception as e:
             return Response({
-                    "detail": "Invalid object. _id is a reserved field"},
-                    status=status.HTTP_400_BAD_REQUEST
-                                )
-            
-        objid = collection.insert(new_obj)
+                "detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+                            )
         return Response({"_id": str(objid)}, status=201)
 
 
 class ObjectView(CloudAPIView):
 
     def get(self, request, cls, objid):
+        logger.info("get request from %s for object %s" %
+                    (request.user.username, objid))
         app = request.META.get('app', None)
         if not app:
-            # We should not have reached here anyway
-            return Response({'detail': 'App id not provided'}, status=401)
-
-        client = MongoClient()
-        db_name = app.name
-        db = client[db_name]
-        collection = db[cls]
-        obj = collection.find_one({"_id": ObjectId(objid)})
+            return Response({'detail': 'App id not provided'}, status=400)
+        try:
+            obj = manager.get_object(app.name, cls, objid)
+        except Exception, e:
+            return Response({"detail": "Invalid object id"},
+                            status=status.HTTP_400_BAD_REQUEST,
+                            exception=True)
         if obj:
-            objid = obj["_id"]
-            obj["_id"] = str(objid)
             return Response({"result": obj})
         else:
             return Response({"detail": "Invalid object id"},
@@ -166,41 +118,29 @@ class ObjectView(CloudAPIView):
     # todo: put should actually replace the existing objects
     # since updating only a few fields does not affect the existing fields, in
     # case the user wanted to delete a few fields. Android: Object.remove()
+    # todo: _id cannot be updated by the request
     def put(self, request, cls, objid):
         app = request.META.get('app', None)
         if not app:
-            # We should not have reached here anyway
-            return Response({'detail': 'App id not provided'}, status=401)
-
-        client = MongoClient()
-        db_name = app.name
-        db = client[db_name]
-        collection = db[cls]
+            return Response({'detail': 'App id not provided'}, status=400)
         try:
             obj = json.loads(request.body)
         except Exception:
             return Response({"detail": "Invalid object id"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
-        if "_id" in obj.keys():
-            return Response({
-                    "detail": "Invalid object. _id is a reserved field"},
+        try:
+            manager.update_object(app.name, cls, objid, obj)
+        except Exception as e:
+                return Response({
+                    "detail": "Invalid object. _id/app_id is a reserved field"},
                     status=status.HTTP_400_BAD_REQUEST
                                 )
-            
-        collection.update({"_id": ObjectId(objid)},
-                          {"$set": obj})               
         return Response()
 
     def delete(self, request, cls, objid):
         app = request.META.get('app', None)
         if not app:
-            # We should not have reached here anyway
-            return Response({'detail': 'App id not provided'}, status=401)
-
-        client = MongoClient()
-        db_name = app.name
-        db = client[db_name]
-        collection = db[cls]
-        collection.remove(ObjectId(objid))
+            return Response({'detail': 'App id not provided'}, status=400)
+        manager.delete_object(app.name, cls, objid)
         return Response()

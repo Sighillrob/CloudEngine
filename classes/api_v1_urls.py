@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from rest_framework.urlpatterns import format_suffix_patterns
-from views import ClassView, ObjectView, AppClassesView
+from classes.views import ClassView, ObjectView, AppClassesView
 
 
 # todo: this regex puts limit on the names that classes and objects can have
