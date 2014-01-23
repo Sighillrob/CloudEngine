@@ -2,11 +2,28 @@
 
 import logging
 import json
+<<<<<<< HEAD
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from rest_framework.response import Response
 from rest_framework import status
 from core.cloudapi_view import CloudAPIView
+=======
+import csv
+import cStringIO as StringIO
+#from rest_framework.views import APIView
+from core.cloudapi_view import CloudAPIView
+from core.models import CloudApp
+from rest_framework.response import Response
+from rest_framework import status
+from django.views.generic import TemplateView, View
+from django.shortcuts import  redirect
+from django.http import HttpResponse
+from classes.forms import FileUploadForm
+from manager import ClassesManager
+from classes.utils import validate_db_name
+from classes.csv_unicode import DictWriter
+>>>>>>> 14181f4... order query results in ascending/descending manner
 
 logger = logging.getLogger("cloudengine")
 
@@ -24,6 +41,11 @@ class AppClassesView(CloudAPIView):
 
 class ClassView(CloudAPIView):
 
+<<<<<<< HEAD
+=======
+    DEFAULT_QUERY = '{}'
+
+>>>>>>> 14181f4... order query results in ascending/descending manner
     def get(self, request, cls):
         app = request.META['app']
         db_name = app.name
@@ -40,6 +62,31 @@ class ClassView(CloudAPIView):
             return Response({"detail": "Invalid query"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
+<<<<<<< HEAD
+=======
+        
+        
+        try:
+            # urlparse the query
+            order_str = request.GET['orderby']
+            order_obj = json.loads(order_str)
+            assert(len(order_obj) == 1)      # sorting possible only on one key
+            order_by = order_obj.keys()[0]
+            order = order_obj.values()[0]
+        except AssertionError:
+            return Response({'detail': 'orderby option takes only one property value'},
+                            status=status.HTTP_400_BAD_REQUEST,
+                            exception=True)
+        except Exception, e:
+            order_by = order = None
+        try:
+            res = manager.get_class(db_name, app, cls, query, order_by, order)
+        except Exception, e:
+            return Response({'detail': str(e)},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            exception=True)
+        return Response({"result": res})
+>>>>>>> 14181f4... order query results in ascending/descending manner
 
         cursor = collection.find(query)      # app_id is used only by server
         res = [doc for doc in cursor]
