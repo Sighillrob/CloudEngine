@@ -31,20 +31,25 @@ All the python library dependencies are listed in `requirements.txt`
 Installation
 ===============
 
-Clone the project. Create a virtualenv namespace and activate it.
+Create a virtualenv namespace and activate it.
 
-	virtualenv cloudengine-site
-	cd cloudengine-site
+	virtualenv myenv
+	cd myenv
 	source bin/activate
 
-Install all the required dependencies
+You can install CloudEngine using pip. You can also grab the source distributions as well as windows and mac installers from the 
+[project homepage][projectpage]. On Windows, CloudEngine will be installed without support for gevent-socketio 
+and gunicorn (i.e. you can't test push notifications and related features).
 
-	pip install -r requirements.txt
+	pip install cloudengine	
+
 
 Configure database and other necessary 
-settings in `cloudengine.settings.py`. Create database tables.
+settings in your project's `settings.py`. 
 
-	manage.py syncdb
+Create database tables.
+
+	python manage.py syncdb
 	
 Run the gunicorn server with gevent-socketio worker class. Add the project directory 
 to python path
@@ -53,13 +58,16 @@ to python path
 	--worker-class socketio.sgunicorn.GeventSocketIOWorker  \
 	cloudengine.wsgi:application
 	
-On development environments run the django server,
 
-	manage.py runserver
-	
+
+On development environments, you can simply run the django development server
+
+	python manage.py runserver
+
 Please note the development server doesn't support SocketIO hence you can't test 
 push notifications locally.
-
+	
+	
 Technical Overview
 ====================
 
@@ -113,3 +121,4 @@ See the LICENSE file for more info.
 [issue-tracker]: https://github.com/cloudengine/CloudEngine/issues
 [android-sdk]: https://github.com/cloudengine/Android-SDK
 [django-rest]: https://github.com/tomchristie/django-rest-framework
+[projectpage]: http://getcloudengine.com

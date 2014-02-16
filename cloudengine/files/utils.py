@@ -1,5 +1,5 @@
 
-from files.models import CloudFile
+from cloudengine.files.models import CloudFile
 
 
 def get_total_size(owner):

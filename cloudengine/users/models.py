@@ -4,9 +4,9 @@ import warnings
 import datetime
 import hashlib
 import random
-from core.models import CloudApp
+from cloudengine.core.models import CloudApp
 
-from users.signals import app_user_logged_in
+from cloudengine.users.signals import app_user_logged_in
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 from django.core import validators
@@ -241,8 +241,8 @@ class AbstractAppUser(AbstractBaseAppUser):
     REQUIRED_FIELDS = ['email']
 
     class Meta:
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
+        verbose_name = _('App user')
+        verbose_name_plural = _('App users')
         abstract = True
 
     def get_full_name(self):
@@ -308,7 +308,7 @@ class AppUser(AbstractAppUser):
     
     
     def __unicode__(self):
-        return u"Registration information for %s" % self.user
+        return unicode(self.username)
     
     def activation_key_expired(self):
         """

@@ -1,11 +1,11 @@
 import re
-from users.signals import (
+from cloudengine.users.signals import (
                            app_user_login_failed, 
                            app_user_logged_in,
                            app_user_logged_out
                            )
-from users.backends import ModelBackend
-from users.middleware import SESSION_KEY
+from cloudengine.users.backends import ModelBackend
+from cloudengine.users.middleware import SESSION_KEY
 
 from django.middleware.csrf import rotate_token
 
@@ -75,5 +75,5 @@ def logout(request):
 
     request.session.flush()
     if hasattr(request, 'app_user'):
-        from users.models import AnonymousAppUser
+        from cloudengine.users.models import AnonymousAppUser
         request.app_user = AnonymousAppUser()

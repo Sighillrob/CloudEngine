@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 
 class CloudApp(models.Model):
     name = models.CharField(max_length=20, unique=True)
-    key = models.CharField(max_length=40, primary_key=True)
+    key = models.CharField("App ID", max_length=40, primary_key=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
