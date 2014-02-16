@@ -45,7 +45,74 @@ and gunicorn (i.e. you can't test push notifications and related features).
 
 
 Configure database and other necessary 
-settings in your project's `settings.py`. 
+settings in your project's `settings.py`. If you've had trouble installing MySQL-python, you can 
+skip using MySQL and use sqlite3 or PostgreSQL instead (you'll need install Psycopg for PostgreSQL)
+
+Add the following settings to `settings.py`
+make sure your SECRET_KEY is a random secret string
+
+	
+	REST_FRAMEWORK = {
+	    # Use hyperlinked styles by default.
+	    # Only used if the `serializer_class` attribute is not set on a view.
+	    'DEFAULT_AUTHENTICATION_CLASSES': (
+	        #'rest_framework.authentication.BasicAuthentication',
+	        'rest_framework.authentication.TokenAuthentication',
+	        'rest_framework.authentication.SessionAuthentication',
+	    ),
+	    'DEFAULT_MODEL_SERIALIZER_CLASS':
+	    'rest_framework.serializers.HyperlinkedModelSerializer',
+	    'PAGINATE_BY': 10,
+	
+	    # Use Django's standard `django.contrib.auth` permissions,
+	    # or allow read-only access for unauthenticated users.
+	    'DEFAULT_PERMISSION_CLASSES': [
+	        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+	        'rest_framework.permissions.IsAuthenticated',
+	    ]
+	}
+
+	
+	EMAIL_VERIFICATION_DAYS = 7
+	
+	# By default files are uploaded to amazon S3 buckets
+	DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+	
+	# The name of the directory that users will upload the files to
+	REMOTE_FILES_DIR = 'root'
+	
+	
+	# Azure Credentials
+	AZURE_STORAGE_ACCOUNT = ''
+	AZURE_STORAGE_KEY = ''
+	AZURE_STORAGE_CONTAINER = ''
+
+
+	
+	# AWS Credentials
+	AWS_ACCESS_KEY_ID = ""
+	AWS_SECRET_ACCESS_KEY = ""
+	AWS_STORAGE_BUCKET_NAME = ""
+	
+
+In the list of `INSTALLED_APPS` add the following apps
+
+	
+	INSTALLED_APPS = (
+	    	'django.contrib.auth',
+	    	...
+	    	...			
+			'registration',
+			'rest_framework',
+			'rest_framework.authtoken',
+			'storages',
+			'cloudengine',
+			'cloudengine.core',
+			'cloudengine.classes',
+			'cloudengine.push',
+			'cloudengine.files',
+			'cloudengine.users',
+			)
 
 Create database tables.
 
