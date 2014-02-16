@@ -1,4 +1,4 @@
-from users.models import AppUser
+from cloudengine.users.models import AppUser
 from rest_framework import serializers
 
 

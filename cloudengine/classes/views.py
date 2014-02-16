@@ -6,7 +6,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from rest_framework.response import Response
 from rest_framework import status
-from core.cloudapi_view import CloudAPIView
+from cloudengine.core.cloudapi_view import CloudAPIView
 
 logger = logging.getLogger("cloudengine")
 

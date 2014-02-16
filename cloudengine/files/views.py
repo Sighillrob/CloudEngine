@@ -1,19 +1,17 @@
 import logging
 import uuid
 from models import CloudFile
-from files.forms import FileUploadForm
+from cloudengine.files.forms import FileUploadForm
 from django.core.files.base import ContentFile
 from django.template import RequestContext
 from django.views.generic import View
 from django.shortcuts import render
-from core.cloudapi_view import CloudAPIView
-from core.models import CloudApp
+from cloudengine.core.cloudapi_view import CloudAPIView
+from cloudengine.core.models import CloudApp
 from rest_framework.response import Response
 from boto.s3.connection import S3Connection
 from django.core.files.storage import default_storage
-from cloudengine.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, \
-    AWS_STORAGE_BUCKET_NAME, REMOTE_FILES_DIR
-
+from django.conf import settings
 
 logger = logging.getLogger("cloudengine")
 
@@ -65,12 +63,12 @@ class FileView(CloudAPIView):
         new_file = CloudFile(name=filename, app=app)
 
         # generate a friendly url and return to the user
-        conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+        conn = S3Connection(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
         while True:
             id = uuid.uuid4()
             new_filename = str(id) + '-' + \
                 filename          # Try a new name if already exists
-            key = '/'.join([REMOTE_FILES_DIR, new_filename])
+            key = '/'.join([settings.REMOTE_FILES_DIR, new_filename])
             # check if such a file exists
             if not default_storage.exists(key):
                 break
@@ -79,14 +77,14 @@ class FileView(CloudAPIView):
         new_file.content.save(new_filename, cont_file)
 
         url = conn.generate_url(
-            AWS_URL_EXPIRY, "GET", bucket=AWS_STORAGE_BUCKET_NAME, key=key)
+            AWS_URL_EXPIRY, "GET", bucket=settings.AWS_STORAGE_BUCKET_NAME, key=key)
         new_file.url = url
         new_file.save()
 
         return Response({"url": url}, status=201)
     
     def delete(self, request, filename):
-        conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+        conn = S3Connection(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
         app = request.META.get('app', None)
         if not app:
             # We should not have reached here anyway
@@ -133,12 +131,12 @@ class FileBrowserView(View):
         filename = self.clean_filename(myfile.name)
         new_file = CloudFile(name=filename, app=appobj)
 
-        conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+        conn = S3Connection(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
         while True:
             id = uuid.uuid4()
             new_filename = str(id) + '-' + \
                 filename          # Try a new name if already exists
-            key = '/'.join([REMOTE_FILES_DIR, new_filename])
+            key = '/'.join([settings.REMOTE_FILES_DIR, new_filename])
             # check if such a file exists
             if not default_storage.exists(key):
                 break
@@ -146,7 +144,7 @@ class FileBrowserView(View):
         new_file.content.save(new_filename, myfile)
 
         url = conn.generate_url(
-            AWS_URL_EXPIRY, "GET", bucket=AWS_STORAGE_BUCKET_NAME, key=key)
+            AWS_URL_EXPIRY, "GET", bucket=settings.AWS_STORAGE_BUCKET_NAME, key=key)
         new_file.url = url
         new_file.save()
         c = {

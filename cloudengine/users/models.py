@@ -4,9 +4,9 @@ import warnings
 import datetime
 import hashlib
 import random
-from core.models import CloudApp
+from cloudengine.core.models import CloudApp
 
-from users.signals import app_user_logged_in
+from cloudengine.users.signals import app_user_logged_in
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 from django.core import validators

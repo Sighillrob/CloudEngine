@@ -1,0 +1,16 @@
+include CHANGES README.md LICENCE
+recursive-include cloudengine *.py *.html *.css *.js 
+include docs/Makefile
+recursive-include docs/source *
+recursive-include cloudengine/templates *
+recursive-include cloudengine/static *
+recursive-include cloudengine/classes/templates *
+recursive-include cloudengine/classes/static *
+recursive-include cloudengine/core/templates *
+recursive-include cloudengine/core/static *
+recursive-include cloudengine/files/templates *
+recursive-include cloudengine/files/static *
+recursive-include cloudengine/push/templates *
+recursive-include cloudengine/push/static *
+recursive-include cloudengine/users/templates *
+recursive-include cloudengine/users/static *

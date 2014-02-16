@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import CloudApp
+from cloudengine.core.models import CloudApp
 from django.conf import settings
 
 

@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-from users.models import AppUser
+from cloudengine.users.models import AppUser
 
 class ModelBackend(object):
     

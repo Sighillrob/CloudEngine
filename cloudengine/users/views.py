@@ -1,8 +1,8 @@
 import logging
 import json
 import StringIO
-from core.cloudapi_view import CloudAPIView
-from core.models import AppSettings
+from cloudengine.core.cloudapi_view import CloudAPIView
+from cloudengine.core.models import AppSettings
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import JSONParser
@@ -20,10 +20,10 @@ from django.utils.decorators import method_decorator
 from django.http import (Http404,
                          HttpResponse)
 from django.http import HttpResponseRedirect
-from users.auth import authenticate, login, logout
-from users.models import AppUser, AnonymousAppUser
-from users.serializers import AppUserSerializer
-from users.forms import SetPasswordForm
+from cloudengine.users.auth import authenticate, login, logout
+from cloudengine.users.models import AppUser, AnonymousAppUser
+from cloudengine.users.serializers import AppUserSerializer
+from cloudengine.users.forms import SetPasswordForm
 
 
 class UserClassView(CloudAPIView):

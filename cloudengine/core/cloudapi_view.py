@@ -2,7 +2,7 @@ import datetime
 from django.utils.timezone import utc
 from rest_framework.views import APIView
 from rest_framework import HTTP_HEADER_ENCODING
-from core.models import CloudAPI, CloudApp
+from cloudengine.core.models import CloudAPI, CloudApp
 from rest_framework.exceptions import AuthenticationFailed, NotAuthenticated
 
 

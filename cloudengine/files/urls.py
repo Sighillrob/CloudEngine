@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from rest_framework.urlpatterns import format_suffix_patterns
-from files.views import FileBrowserView
+from cloudengine.files.views import FileBrowserView
 #
 
 # todo: rest api -- allow traversing api through urls??

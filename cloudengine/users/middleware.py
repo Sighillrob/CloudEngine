@@ -1,11 +1,11 @@
-from users.backends import ModelBackend
+from cloudengine.users.backends import ModelBackend
 from django.utils.functional import SimpleLazyObject
 
 
 SESSION_KEY = '_auth_app_user_id'
 
 def get_user(request):
-    from users.models import AnonymousAppUser
+    from cloudengine.users.models import AnonymousAppUser
     try:
         user_id = request.session[SESSION_KEY]
         backend = ModelBackend()

@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import CloudApp
+from cloudengine.core.models import CloudApp
 # Create your models here.
 
 
