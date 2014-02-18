@@ -55,6 +55,7 @@ skip using MySQL and use sqlite3 or PostgreSQL instead (you'll need install Psyc
 Add the following settings to `settings.py`
 make sure your SECRET_KEY is a random secret string
 
+	MONGO_HOST = 'localhost'   # assuming your mongodb server is running locally
 	
 	REST_FRAMEWORK = {
 	    # Use hyperlinked styles by default.
