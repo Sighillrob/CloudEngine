@@ -44,6 +44,10 @@ and gunicorn (i.e. you can't test push notifications and related features).
 	pip install cloudengine	
 
 
+Create a new django project (myproject)
+
+	django-admin.py startproject myproject
+
 Configure database and other necessary 
 settings in your project's `settings.py`. If you've had trouble installing MySQL-python, you can 
 skip using MySQL and use sqlite3 or PostgreSQL instead (you'll need install Psycopg for PostgreSQL)
@@ -75,19 +79,14 @@ make sure your SECRET_KEY is a random secret string
 	
 	EMAIL_VERIFICATION_DAYS = 7
 	
+
+If you want to use Amazon S3 as your primary file storage service, also add the following settings and fill in your amazon credentials at appropriate places.
+
 	# By default files are uploaded to amazon S3 buckets
 	DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-	
+
 	# The name of the directory that users will upload the files to
 	REMOTE_FILES_DIR = 'root'
-	
-	
-	# Azure Credentials
-	AZURE_STORAGE_ACCOUNT = ''
-	AZURE_STORAGE_KEY = ''
-	AZURE_STORAGE_CONTAINER = ''
-
-
 	
 	# AWS Credentials
 	AWS_ACCESS_KEY_ID = ""
@@ -117,6 +116,10 @@ In the list of `INSTALLED_APPS` add the following apps
 Create database tables.
 
 	python manage.py syncdb
+	
+Add the following line in the `myproject.urls.py`
+
+	url('', include('cloudengine.urls')), 	
 	
 Run the gunicorn server with gevent-socketio worker class. Add the project directory 
 to python path
