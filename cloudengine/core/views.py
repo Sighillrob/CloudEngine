@@ -68,6 +68,6 @@ class AppSettingsView(TemplateView):
 
     def get_context_data(self, app_name):
         app = CloudApp.objects.get(name=app_name)
-        return {'app': app}
+        return { 'app_name': app_name, 'app': app}
 
         

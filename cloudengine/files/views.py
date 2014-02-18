@@ -168,3 +168,5 @@ class FileBrowserView(View):
 class AppFilesView(TemplateView):
     template_name= "app_files.html"
     
+    def get_context_data(self, app_name):
+        return {'app_name': app_name}
