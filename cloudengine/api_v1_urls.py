@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url, include
-from cloudengine.core.views import AppView, AppListView
+from cloudengine.core.api_views import AppView, AppListView
 
 urlpatterns = patterns('',
 

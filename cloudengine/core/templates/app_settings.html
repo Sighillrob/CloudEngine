@@ -1,0 +1,34 @@
+{% extends 'admin_base.html' %}
+
+
+
+{% block content %}
+<div class="page-header">
+	<h1>{{app.name}} App Settings</h1>
+	
+	<a href="{% url 'cloudengine-admin-home' %}">Admin</a> >> &nbsp; <a href="{% url 'cloudengine-app-view' app.name %}">{{app.name}}</a> 
+	>> &nbsp; <a href="">Settings</a>
+	</div>
+
+	
+
+	<div class="row">
+		<div class="col-md-6 col-sm-4">
+		<div class="panel panel-primary">
+	         <div class="panel-heading">
+	           <h3 class="panel-title">Manage app settings</h3>
+	         </div>
+	         <div class="panel-body">
+	         
+	         <form>
+	         	<label for="id_app_key">App Key &nbsp;</label>
+	         	{{ app.key }}
+	      	</form>
+	          <br><br>
+	          <button class="btn btn-danger">Delete App</button>
+	         
+	         </div>
+	       </div>
+	   	</div>
+	    </div>      
+{% endblock %}

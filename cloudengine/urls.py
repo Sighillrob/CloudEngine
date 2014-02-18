@@ -1,11 +1,13 @@
 from django.conf.urls import patterns, include, url
 from cloudengine.core.views import AccountKeysView
+from django.views.generic import TemplateView
 
 urlpatterns = patterns(
     '',
     # Examples:
     
-    (r'', include('cloudengine.core.urls')),
+    url(r'^$', TemplateView.as_view(template_name="index.html")),
+    url(r'^admin/', include('cloudengine.admin_urls')),
     url(r'^api-auth/', include(
         'rest_framework.urls', namespace='rest_framework')),
 
