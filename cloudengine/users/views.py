@@ -16,6 +16,7 @@ from django.views.generic import View
 from django.template.response import TemplateResponse
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.cache import never_cache
+from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 from django.http import (Http404,
                          HttpResponse)
@@ -275,4 +276,8 @@ def password_reset_complete(request, app_name):
     return TemplateResponse(request, template_name, context)
 
 
+
+    
+class AppUsersView(TemplateView):
+    template_name= "app_users.html"
     

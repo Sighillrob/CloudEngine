@@ -31,10 +31,25 @@ CloudEngine Admin
     </div>
     
     <div class="container theme-showcase" >
-    {% block content %}
     
+   
+	   	<div class="page-header">
+		<h1>
+		{% block page_header %}
+		
+		{% endblock %}
+		</h1>
+		
+		{% block breadcrum %}
+		
+		{% endblock %}
+		
+		</div>
+		<br>
+		
+		{% block content %}
     
-    {% endblock %}
+    	{% endblock %}
     </div>
 
 

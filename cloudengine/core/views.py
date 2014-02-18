@@ -62,23 +62,6 @@ class AppView(TemplateView):
         print "app dlete called"
         return HttpResponse("app  delete method called")
 
-        
-class AppDataView(TemplateView):
-    template_name= "app_data.html"
-    
-    
-    
-class AppFilesView(TemplateView):
-    template_name= "app_files.html"
-    
-    
-class AppPushView(TemplateView):
-    template_name= "app_push.html"
-    
-    
-class AppUsersView(TemplateView):
-    template_name= "app_users.html"
-    
     
 class AppSettingsView(TemplateView):
     template_name= "app_settings.html"

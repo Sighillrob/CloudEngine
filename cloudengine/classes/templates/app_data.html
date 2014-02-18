@@ -1,18 +1,17 @@
-{% extends 'admin_base.html' %}
+{% extends 'app.html' %}
 
+{% block page_header %}
+	{{app_name}} App Data
+{% endblock %}
+
+{% block breadcrum %}
+
+	{{ block.super }} >> &nbsp; <a href="">Data</a>
+	
+{% endblock %}
 
 {% block content %}
-<div class="page-header">
-	<h1>{{app_name}} App Data</h1>
 	
-	<a href="{% url 'cloudengine-admin-home' %}">Admin</a> >> &nbsp; <a href="{% url 'cloudengine-app-view' app_name %}">{{app_name}}</a> 
-	>> &nbsp; <a href="">Data</a>
-	
-	
-	</div>
-
-	
-
 	<div class="row">
 		<div class="col-md-6 col-sm-4">
 		<div class="panel panel-primary">

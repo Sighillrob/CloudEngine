@@ -1,8 +1,6 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 from cloudengine.core.views import (CreateAppView, 
-                AdminHomeView, AppView, AppDataView,
-                AppFilesView, AppPushView, AppUsersView,
-                AppSettingsView)
+                AdminHomeView, AppView, AppSettingsView)
 
 urlpatterns = patterns('',
 
@@ -13,17 +11,17 @@ urlpatterns = patterns('',
                         url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/$', 
                             AppView.as_view(), name="cloudengine-app-view"),
                        
-                       url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/data/$', 
-                            AppDataView.as_view(), name="cloudengine-app-data"),
+                       url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/data/', 
+                            include('cloudengine.classes.urls')),
                        
-                       url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/files/$', 
-                            AppFilesView.as_view(), name="cloudengine-app-files"),
+                       url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/files/', 
+                            include('cloudengine.files.urls')),
                        
                        url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/push/$', 
-                            AppPushView.as_view(), name="cloudengine-app-push"),
+                            include('cloudengine.push.urls')),
                        
                        url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/users/$', 
-                            AppUsersView.as_view(), name="cloudengine-app-users"),
+                            include('cloudengine.users.urls')),
                        
                        url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/settings/$', 
                             AppSettingsView.as_view(), name="cloudengine-app-settings"),

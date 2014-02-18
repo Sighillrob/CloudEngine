@@ -3,6 +3,7 @@
 import logging
 import json
 #from rest_framework.views import APIView
+from django.views.generic import TemplateView
 from rest_framework.response import Response
 from rest_framework import status
 from cloudengine.classes.manager import ClassesManager
@@ -144,3 +145,11 @@ class ObjectView(CloudAPIView):
             return Response({'detail': 'App id not provided'}, status=400)
         manager.delete_object(app.name, cls, objid)
         return Response()
+
+
+
+        
+class AppDataView(TemplateView):
+    template_name= "app_data.html"
+    
+    

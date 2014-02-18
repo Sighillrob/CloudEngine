@@ -1,6 +1,7 @@
 import json
 from socketio import socketio_manage
 from django.http import HttpResponse
+from django.views.generic import TemplateView
 from rest_framework import status
 from rest_framework.response import Response
 from cloudengine.core.cloudapi_view import CloudAPIView
@@ -47,3 +48,7 @@ class PushAPIView(CloudAPIView):
         notification = PushNotification(app=app, num_subscribers=count)
         notification.save()
         return Response({"result": count})
+
+    
+class AppPushView(TemplateView):
+    template_name= "app_push.html"

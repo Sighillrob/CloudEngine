@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from boto.s3.connection import S3Connection
 from django.core.files.storage import default_storage
 from django.conf import settings
+from django.views.generic import TemplateView
 
 logger = logging.getLogger("cloudengine")
 
@@ -162,3 +163,8 @@ class FileBrowserView(View):
 
     def clean_filename(self, name):
         return name.replace(' ', '-')
+
+
+class AppFilesView(TemplateView):
+    template_name= "app_files.html"
+    
