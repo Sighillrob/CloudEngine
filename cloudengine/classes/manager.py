@@ -45,8 +45,7 @@ class ClassesManager(object):
         db = validate_db_name(db)
         db = self.client[db]
         if klass in db.collection_names():
-            collection = db[klass]
-            collection.remove()
+            db.drop_collection(klass)
 
 
     def add_object(self, db, klass, obj):
@@ -101,6 +100,8 @@ class ClassesManager(object):
         db = self.client[db]
         collection = db[klass]
         collection.remove(ObjectId(id))
+        if not collection.count():
+            db.drop_collection(klass)
         
         
     def delete_app_data(self, db):
