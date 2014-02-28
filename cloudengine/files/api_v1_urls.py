@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from rest_framework.urlpatterns import format_suffix_patterns
-from views import FileView, FileListView
+from api import FileView, FileListView
 
 
 urlpatterns = patterns('',
