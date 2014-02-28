@@ -20,7 +20,6 @@ class ClassesManager(object):
     
     def get_class(self, db, klass, query, sort_key=None, direction = None):
         db = validate_db_name(db)
-        
         try:
             if direction:
                 assert(direction == pymongo.ASCENDING or direction == pymongo.DESCENDING)
@@ -102,7 +101,6 @@ class ClassesManager(object):
         collection.remove(ObjectId(id))
         if not collection.count():
             db.drop_collection(klass)
-        
         
     def delete_app_data(self, db):
         db = validate_db_name(db)
