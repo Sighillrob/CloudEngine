@@ -20,10 +20,15 @@
 	         <div class="panel-body">
 	         
 	         <form>
+	         <formset >
+	         	<label for="id_app_key">API Key &nbsp;</label>
+	         	{{ token }}
+	         	
+	         	<br><br>
 	         	<label for="id_app_key">App Key &nbsp;</label>
 	         	{{ app.key }}
 	      	</form>
-	          <br><br>
+	          <br><br><br>
 	          <button class="btn btn-danger">Delete App</button>
 	         
 	         </div>

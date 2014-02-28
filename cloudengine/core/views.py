@@ -1,10 +1,10 @@
-from rest_framework.authtoken.models import Token
-from django.shortcuts import render_to_response
+
 from django.views.generic import TemplateView
 from django.core.context_processors import csrf
+from django.http import HttpResponse
 from cloudengine.core.forms import CreateAppForm
 from cloudengine.core.models import CloudApp
-from django.http import HttpResponse
+from cloudengine.auth.models import Token
 
 class AccountKeysView(TemplateView):
 
@@ -68,6 +68,8 @@ class AppSettingsView(TemplateView):
 
     def get_context_data(self, app_name):
         app = CloudApp.objects.get(name=app_name)
-        return { 'app_name': app_name, 'app': app}
+        token = Token.objects.get()
+        return { 'app_name': app_name, 'app': app,
+                'token': token}
 
         

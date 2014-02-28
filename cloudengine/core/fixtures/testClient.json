@@ -19,7 +19,7 @@
 },
 {
     "pk": "e9d1ea7a537ec1575c30a43a68a1239f80f4a9b8", 
-    "model": "cloudengine.cloudapp", 
+    "model": "cloudengine.core.CloudApp", 
     "fields": {
         "created": "2013-10-13T13:16:19Z", 
         "name": "TestApp"
