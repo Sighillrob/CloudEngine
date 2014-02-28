@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 from rest_framework.urlpatterns import format_suffix_patterns
-from cloudengine.push.views import PushAPIView, PushSubscribers
+from cloudengine.push.api import PushAPIView, PushSubscribers
 
 urlpatterns = patterns('',
                        url(
