@@ -9,5 +9,5 @@ urlpatterns = patterns('',
                        url(r'^apps/(?P<name>[a-zA-Z0-9]+)/$',
                            AppView.as_view()),
                        url(r'^apps/$', AppListView.as_view()),
-                       url(r'^users/', include('cloudengine.cloudusers.api_v1_urls')),
+                       url(r'^users/', include('cloudengine.users.api_v1_urls')),
                        )

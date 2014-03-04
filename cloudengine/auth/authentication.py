@@ -7,7 +7,7 @@ from cloudengine.auth.models import Token, APIUser
 The auth class is similar to django-rest-framework's token auth except that it doesn't make
 the assumption about every user having a unique token i.e. it allows for multiple
 users to have the same token which is very useful in certain scenarios such as building
-API for mobile apps. Also since CloudEngine handles users management separately, the purpose of
+API for mobile apps. Also since CloudEngine handles user management separately, the purpose of
 the auth is only to authorize the caller to call an API. Hence, the token auth maps an 
 authorized request to an AnonymousUser.
 '''
