@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='cloudengine',
-    version='0.3',
+    version='0.3.1',
     author=u'Swapnil Talekar',
     author_email='swapnil@getcloudengine.net',
     packages= ['cloudengine', 'cloudengine.classes', 'cloudengine.core',
