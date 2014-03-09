@@ -287,9 +287,9 @@ class BaseNamespace(object):
 
         Namespaces are created only when some packets arrive that ask
         for the namespace.  They are not created altogether when a new
-        :class:`~socketio.virtsocket.Socket` connection is established,
+        :class:`~cloudengine.socketio.virtsocket.Socket` connection is established,
         so you can have many many namespaces assigned (when calling
-        :func:`~socketio.socketio_manage`) without clogging the
+        :func:`~cloudengine.socketio.socketio_manage`) without clogging the
         memory.
 
         If you override this method, you probably want to initialize

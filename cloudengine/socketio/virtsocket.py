@@ -17,8 +17,8 @@ import gevent
 from gevent.queue import Queue
 from gevent.event import Event
 
-from socketio import packet
-from socketio.defaultjson import default_json_loads, default_json_dumps
+from cloudengine.socketio import packet
+from cloudengine.socketio.defaultjson import default_json_loads, default_json_dumps
 
 
 log = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 def default_error_handler(socket, error_name, error_message, endpoint,
                           msg_id, quiet):
     """This is the default error handler, you can override this when
-    calling :func:`socketio.socketio_manage`.
+    calling :func:`cloudengine.socketio.socketio_manage`.
 
     It basically sends an event through the socket with the 'error' name.
 
@@ -214,7 +214,7 @@ class Socket(object):
         disconnection from the client.
 
         It will call all of the Namespace's
-        :meth:`~socketio.namespace.BaseNamespace.disconnect` methods
+        :meth:`~cloudengine.socketio.namespace.BaseNamespace.disconnect` methods
         so that you can shut-down things properly.
 
         """
@@ -299,7 +299,7 @@ class Socket(object):
     # User facing low-level function
     def disconnect(self, silent=False):
         """Calling this method will call the
-        :meth:`~socketio.namespace.BaseNamespace.disconnect` method on
+        :meth:`~cloudengine.socketio.namespace.BaseNamespace.disconnect` method on
         all the active Namespaces that were open, killing all their
         jobs and sending 'disconnect' packets for each of them.
 
@@ -307,7 +307,7 @@ class Socket(object):
         as it represents the whole connection,
 
         :param silent: when True, pass on the ``silent`` flag to the Namespace
-                       :meth:`~socketio.namespace.BaseNamespace.disconnect`
+                       :meth:`~cloudengine.socketio.namespace.BaseNamespace.disconnect`
                        calls.
         """
         for ns_name, ns in list(self.active_ns.iteritems()):
@@ -317,7 +317,7 @@ class Socket(object):
         """This removes a Namespace object from the socket.
 
         This is usually called by
-        :meth:`~socketio.namespace.BaseNamespace.disconnect`.
+        :meth:`~cloudengine.socketio.namespace.BaseNamespace.disconnect`.
 
         """
         if namespace in self.active_ns:

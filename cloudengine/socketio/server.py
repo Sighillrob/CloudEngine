@@ -5,9 +5,9 @@ from socket import error
 
 from gevent.pywsgi import WSGIServer
 
-from socketio.handler import SocketIOHandler
-from socketio.policyserver import FlashPolicyServer
-from socketio.virtsocket import Socket
+from cloudengine.socketio.handler import SocketIOHandler
+from cloudengine.socketio.policyserver import FlashPolicyServer
+from cloudengine.socketio.virtsocket import Socket
 from geventwebsocket.handler import WebSocketHandler
 
 __all__ = ['SocketIOServer']

@@ -126,8 +126,8 @@ Run the gunicorn server with gevent-socketio worker class. Add the project direc
 to python path
 
 	gunicorn -w 1 --pythonpath .  \
-	--worker-class socketio.sgunicorn.GeventSocketIOWorker  \
-	cloudengine.wsgi:application
+	--worker-class cloudengine.socketio.sgunicorn.GeventSocketIOWorker  \
+	<your-project-wsgi-module>:application
 	
 
 

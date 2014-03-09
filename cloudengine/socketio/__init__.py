@@ -32,7 +32,7 @@ def socketio_manage(environ, namespaces, request=None, error_handler=None,
     ``gevent-socketio`` library.
 
     Pass in an ``error_handler`` if you want to override the default
-    error_handler (which is :func:`socketio.virtsocket.default_error_handler`.
+    error_handler (which is :func:`cloudengine.socketio.virtsocket.default_error_handler`.
     The callable you pass in should have the same signature as the default
     error handler.
 

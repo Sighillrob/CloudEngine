@@ -9,8 +9,8 @@ from gunicorn.workers.ggevent import GeventPyWSGIWorker
 from gunicorn.workers.ggevent import PyWSGIHandler
 from gunicorn.workers.ggevent import GeventResponse
 from gunicorn import version_info as gunicorn_version
-from socketio.server import SocketIOServer
-from socketio.handler import SocketIOHandler
+from cloudengine.socketio.server import SocketIOServer
+from cloudengine.socketio.handler import SocketIOHandler
 
 from geventwebsocket.handler import WebSocketHandler
 

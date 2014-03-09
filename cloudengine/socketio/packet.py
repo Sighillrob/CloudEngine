@@ -1,4 +1,4 @@
-from socketio.defaultjson import default_json_dumps, default_json_loads
+from cloudengine.socketio.defaultjson import default_json_dumps, default_json_loads
 
 MSG_TYPES = {
     'disconnect': 0,

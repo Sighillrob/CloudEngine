@@ -4,7 +4,7 @@ import gevent
 import urlparse
 
 from gevent.pywsgi import WSGIHandler
-from socketio import transports
+from cloudengine.socketio import transports
 
 class SocketIOHandler(WSGIHandler):
     RE_REQUEST_URL = re.compile(r"""
