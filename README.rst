@@ -1,7 +1,7 @@
 CloudEngine
 ===========
 
-**Open source backend stack for mobile.**
+Open source backend stack for mobile.
 
 
 Overview
@@ -37,8 +37,8 @@ Create a virtualenv namespace and activate it.
 	cd myenv
 	source bin/activate
 
-You can install CloudEngine using pip. You can also grab the source distributions as well as windows and mac installers from the 
-[project homepage][projectpage]. On Windows, CloudEngine will be installed without support for gevent-socketio 
+You can install CloudEngine using pip. You can also grab the source distributions as well as windows and mac installers from 
+http://getcloudengine.com . On Windows, CloudEngine will be installed without support for gevent-socketio 
 and gunicorn (i.e. you can't test push notifications and related features).
 
 	pip install cloudengine	
@@ -58,10 +58,7 @@ make sure your SECRET_KEY is a random secret string
 	MONGO_HOST = 'localhost'   # assuming your mongodb server is running locally
 	
 	REST_FRAMEWORK = {
-	    # Use hyperlinked styles by default.
-	    # Only used if the `serializer_class` attribute is not set on a view.
 	    'DEFAULT_AUTHENTICATION_CLASSES': (
-	        #'rest_framework.authentication.BasicAuthentication',
 	        'rest_framework.authentication.TokenAuthentication',
 	        'rest_framework.authentication.SessionAuthentication',
 	    ),
@@ -146,14 +143,14 @@ CloudEngine is a pure Python django stack. Each backend service is plugged in as
 app. Each service should be independently pluggable and usable except the core services. 
 Currently some of the services are tightly coupled. CloudEngine currently runs on gunicorn
 server and hence runs only on UNIX environments. CloudEngine uses the excellent
-[gevent-socketio][gevent-socketio] library for implementing real time communication
+gevent-socketio (https://github.com/abourget/gevent-socketio) library for implementing real time communication
 channels, which are the basis of current push notifications system. 
-gevent-socketio is the python port of the popular [socket.io][socket.io] library. 
+gevent-socketio is the python port of the popular socket.io (http://socket.io) library. 
 For storage we use a combination of relational database (MySQL, PostgreSQL) and a
 NoSQL db (Currently mongodb). Ideally, we'd like to move completely to a NoSQL db.
 But we want to leverage a lot of django goodies and there is no elegant way to retain 
-that while migrating to NoSQL. CloudEngine uses [django-rest-framework][django-rest] for providing
-REST interfaces to services.
+that while migrating to NoSQL. CloudEngine uses django-rest-framework (https://github.com/tomchristie/django-rest-framework) 
+for providing REST interfaces to services.
 
 
 Client libraries
@@ -162,34 +159,31 @@ Client libraries
 The aim of the project is also to provide readily available client libraries for 
 as many different platforms as possible to make it easier to consume CloudEngine
 services on mobile devices.
-Currently only Android SDK is available at -  [https://github.com/cloudengine/Android-SDK][android-sdk]
+Currently only Android SDK is available at -  https://github.com/cloudengine/Android-SDK
 We plan to add SDKs for more platforms 
 
 
 Documentation & Support
 ========================
 
-Complete documentation is available at - ?
+Complete documentation is available at 
 
-For discussions, questions and support use the [CloudEngine discussion group][group]
+* http://www.getcloudengine.com/docs/
 
-or [Github issue tracking][issue-tracker]
+For discussions, questions and support use the mailing list
 
-You may also want to [follow the authors on twitter] [twitter]. 
+* https://groups.google.com/forum/#!forum/cloudengine-dev
 
+or Github issue tracking
 
+* https://github.com/cloudengine/CloudEngine/issues
+
+You may also want to follow the authors on twitter. 
+
+* https://twitter.com/thecloudengine
 
 License
 ========
 See the LICENSE file for more info.
 
 
-
-[twitter]: https://twitter.com/thecloudengine
-[group]: https://groups.google.com/forum/#!forum/cloudengine-dev
-[gevent-socketio]: https://github.com/abourget/gevent-socketio
-[socket.io]: http://socket.io
-[issue-tracker]: https://github.com/cloudengine/CloudEngine/issues
-[android-sdk]: https://github.com/cloudengine/Android-SDK
-[django-rest]: https://github.com/tomchristie/django-rest-framework
-[projectpage]: http://getcloudengine.com
