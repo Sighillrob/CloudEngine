@@ -33,20 +33,20 @@ Installation
 
 Create a virtualenv namespace and activate it.
 
-	virtualenv myenv
-	cd myenv
-	source bin/activate
+   virtualenv myenv
+   cd myenv
+   source bin/activate
 
 You can install CloudEngine using pip. You can also grab the source distributions as well as windows and mac installers from 
 http://getcloudengine.com . On Windows, CloudEngine will be installed without support for gevent-socketio 
 and gunicorn (i.e. you can't test push notifications and related features).
 
-	pip install cloudengine	
+   pip install cloudengine	
 
 
 Create a new django project (myproject)
 
-	django-admin.py startproject myproject
+   django-admin.py startproject myproject
 
 Configure database and other necessary 
 settings in your project's `settings.py`. If you've had trouble installing MySQL-python, you can 
@@ -55,82 +55,81 @@ skip using MySQL and use sqlite3 or PostgreSQL instead (you'll need install Psyc
 Add the following settings to `settings.py`
 make sure your SECRET_KEY is a random secret string
 
-	MONGO_HOST = 'localhost'   # assuming your mongodb server is running locally
-	
-	REST_FRAMEWORK = {
-	    'DEFAULT_AUTHENTICATION_CLASSES': (
-	        'rest_framework.authentication.TokenAuthentication',
-	        'rest_framework.authentication.SessionAuthentication',
-	    ),
-	    'DEFAULT_MODEL_SERIALIZER_CLASS':
-	    'rest_framework.serializers.HyperlinkedModelSerializer',
-	    'PAGINATE_BY': 10,
-	
-	    # Use Django's standard `django.contrib.auth` permissions,
-	    # or allow read-only access for unauthenticated users.
-	    'DEFAULT_PERMISSION_CLASSES': [
-	        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-	        'rest_framework.permissions.IsAuthenticated',
-	    ]
-	}
+   MONGO_HOST = 'localhost'   # assuming your mongodb server is running locally
+   
+   REST_FRAMEWORK = {
+       'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+    'rest_framework.serializers.HyperlinkedModelSerializer',
+    'PAGINATE_BY': 10,
 
-	
-	EMAIL_VERIFICATION_DAYS = 7
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+   }
+
+   EMAIL_VERIFICATION_DAYS = 7
 	
 
 If you want to use Amazon S3 as your primary file storage service, also add the following settings and fill in your amazon credentials at appropriate places.
 
-	# By default files are uploaded to amazon S3 buckets
-	DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
-	# The name of the directory that users will upload the files to
-	REMOTE_FILES_DIR = 'root'
-	
-	# AWS Credentials
-	AWS_ACCESS_KEY_ID = ""
-	AWS_SECRET_ACCESS_KEY = ""
-	AWS_STORAGE_BUCKET_NAME = ""
+   # By default files are uploaded to amazon S3 buckets
+   DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+   
+   # The name of the directory that users will upload the files to
+   REMOTE_FILES_DIR = 'root'
+   
+   # AWS Credentials
+   AWS_ACCESS_KEY_ID = ""
+   AWS_SECRET_ACCESS_KEY = ""
+   AWS_STORAGE_BUCKET_NAME = ""
 	
 
 In the list of `INSTALLED_APPS` add the following apps
 
 	
-	INSTALLED_APPS = (
-	    	'django.contrib.auth',
-	    	...
-	    	...			
-			'registration',
-			'rest_framework',
-			'rest_framework.authtoken',
-			'storages',
-			'cloudengine',
-			'cloudengine.core',
-			'cloudengine.classes',
-			'cloudengine.push',
-			'cloudengine.files',
-			'cloudengine.users',
-			)
+   INSTALLED_APPS = (
+	'django.contrib.auth',
+	...
+	...			
+	'registration',
+	'rest_framework',
+	'rest_framework.authtoken',
+	'storages',
+	'cloudengine',
+	'cloudengine.core',
+	'cloudengine.classes',
+	'cloudengine.push',
+	'cloudengine.files',
+	'cloudengine.users',
+	)
 
 Create database tables.
 
-	python manage.py syncdb
+   python manage.py syncdb
 	
 Add the following line in the `myproject.urls.py`
 
-	url('', include('cloudengine.urls')), 	
+   url('', include('cloudengine.urls')), 	
 	
 Run the gunicorn server with gevent-socketio worker class. Add the project directory 
 to python path
 
-	gunicorn -w 1 --pythonpath .  \
-	--worker-class cloudengine.socketio.sgunicorn.GeventSocketIOWorker  \
-	<your-project-wsgi-module>:application
+   gunicorn -w 1 --pythonpath .  \
+   --worker-class cloudengine.socketio.sgunicorn.GeventSocketIOWorker  \
+   <your-project-wsgi-module>:application
 	
 
 
 On development environments, you can simply run the django development server
 
-	python manage.py runserver
+   python manage.py runserver
 
 Please note the development server doesn't support SocketIO hence you can't test 
 push notifications locally.
