@@ -1,7 +1,7 @@
 import logging
 from django.http import HttpRequest
 from rest_framework.views import APIView
-from socketio.namespace import BaseNamespace
+from cloudengine.socketio.namespace import BaseNamespace
 from rest_framework import HTTP_HEADER_ENCODING
 from cloudengine.core.models import CloudApp
 

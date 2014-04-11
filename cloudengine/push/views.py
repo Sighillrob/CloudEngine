@@ -1,4 +1,4 @@
-from socketio import socketio_manage
+from cloudengine.socketio import socketio_manage
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from cloudengine.push.push_service import DefaultNamespace
