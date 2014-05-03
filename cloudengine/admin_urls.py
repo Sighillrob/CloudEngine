@@ -1,11 +1,11 @@
 from django.conf.urls import patterns, url, include
-from django.contrib import admin
+from cloudengine.decorators import admin_view
 from cloudengine.core.views import (CreateAppView, 
                 AdminHomeView, AppView, AppSettingsView)
 
 urlpatterns = patterns('',
 
-                        url(r'^$', admin.site.admin_view (AdminHomeView.as_view()), 
+                        url(r'^$', admin_view (AdminHomeView.as_view()), 
                             name="cloudengine-admin-home"),
                         
                         url(r'^create_app/$', CreateAppView.as_view()),
