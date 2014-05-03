@@ -1,0 +1,24 @@
+{% extends 'home_base.html' %}
+
+{% block title %}
+	About - CloudEngine
+{% endblock title %}
+
+
+{% block content %}
+	<div class="page-header">
+	<h1>CloudEngine</h1>
+	</div>
+
+	<h4>CloudEngine is an open source mobile backend framework. <br> CloudEngine is primarily written in Python and uses
+	Django web framework. <br>It uses both a relational and non-relational database for storage.<br>You can find the project on 
+	<a href="https://github.com/cloudengine/CloudEngine">github</a>.
+	</h4>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+	activateTab('about-tab');
+</script>
+{% endblock %}

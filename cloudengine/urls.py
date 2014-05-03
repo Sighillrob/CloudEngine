@@ -6,8 +6,10 @@ urlpatterns = patterns(
     '',
     # Examples:
     
-    url(r'^$', TemplateView.as_view(template_name="index.html")),
+    url(r'^$', TemplateView.as_view(template_name="index.html"), name="home"),
     url(r'^admin/', include('cloudengine.admin_urls')),
+    url(r'^about/$', TemplateView.as_view(template_name='about.html'),
+                name='about-cloudengine'),
     url(r'^api-auth/', include(
         'rest_framework.urls', namespace='rest_framework')),
 
