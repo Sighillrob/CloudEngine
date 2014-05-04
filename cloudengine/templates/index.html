@@ -1,4 +1,4 @@
-{% extends 'home_base.html' %}
+{% extends 'base_site.html' %}
 
 {% block title %}
 	CloudEngine 
@@ -6,17 +6,17 @@
 
 
 {% block content %}
+	<div class="container">
+	<div id="home-menu" class="pull-right">
+		<a class="btn btn-primary" href="{% url 'cloudengine-admin-home' %}">Admin Login</a>
+	</div>
 	<div class="page-header">
 	<h1>Welcome to CloudEngine</h1>
 	</div>
 
-	<h4>You have successfully installed CloudEngine!
-	<br> Checkout the <a href="http://getcloudengine.com/docs">docs for usage.</a></h4>
-
+	<h4>You have successfully installed CloudEngine! 
+	<br> Checkout the <a href="http://getcloudengine.com/docs">docs for usage.</a>
+	</h4>
+	</div>
 {% endblock %}
 
-{% block scripts %}
-<script type="text/javascript">
-	activateTab('home-tab');
-</script>
-{% endblock %}
