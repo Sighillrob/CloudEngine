@@ -12,16 +12,16 @@ urlpatterns = patterns('',
                         url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/$', 
                             AppView.as_view(), name="cloudengine-app-view"),
                        
-                       url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/data/', 
+                       url(r'^classes/', 
                             include('cloudengine.classes.urls')),
                        
-                       url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/files/', 
+                       url(r'^files/', 
                             include('cloudengine.files.urls')),
                        
-                       url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/push/$', 
+                       url(r'^push/$', 
                             include('cloudengine.push.urls')),
                        
-                       url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/users/$', 
+                       url(r'^users/$', 
                             include('cloudengine.users.urls')),
                        
                        url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/settings/$', 
