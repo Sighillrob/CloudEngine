@@ -6,6 +6,7 @@ from rest_framework import status
 from cloudengine.classes.manager import ClassesManager
 from cloudengine.core.cloudapi_view import CloudAPIView
 from cloudengine.core.utils import paginate
+from cloudengine.classes.manager import SchemaHandler
 from cloudengine.classes.exceptions import (
             InvalidObjectError, InvalidSchemaError)
 
@@ -154,3 +155,21 @@ class ObjectView(CloudAPIView):
         manager.delete_object(app.name, cls, objid)
         return Response({"result": "Object deleted successfully"})
 
+
+
+
+class SchemaView(CloudAPIView):
+    
+    def get(self, request, cls):
+        db_name = request.user.username
+        logger.info("get request from %s for class %s" %
+                    (db_name, cls))
+        app = request.META.get('app', None)
+        if not app:
+            return Response({'error': 'App id not provided'}, status=400)
+        schema_handler = SchemaHandler()
+        schema = schema_handler.get_class_schema(db_name, cls)
+        return Response(schema)
+        
+        
+        
