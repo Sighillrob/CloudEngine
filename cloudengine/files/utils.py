@@ -12,3 +12,13 @@ def get_total_size(owner):
         pass
 
     return total_size
+
+
+def delete_app_files(app):
+    try:
+        files = CloudFile.objects.filter(app=app)
+    except CloudFile.DoesNotExist:
+        pass
+    for fileobj in files:
+        fileobj.content.delete()
+        fileobj.delete()
