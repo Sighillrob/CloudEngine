@@ -1,4 +1,5 @@
-import copy 
+import copy
+import logging 
 import pymongo
 from bson.objectid import ObjectId
 from django.conf import settings
@@ -9,6 +10,7 @@ from cloudengine.classes.exceptions import (
             
 class SchemaHandler(object):
     client = pymongo.MongoClient(settings.MONGO_HOST)
+    logger = logging.getLogger("cloudengine")
     
     def is_same_type(self, schema_value, curr_value):
             t = type(curr_value)

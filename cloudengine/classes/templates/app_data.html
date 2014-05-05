@@ -40,6 +40,8 @@
 	
 		<div class="row" style="margin-bottom: 20px;">
 	           <div class="col-md-12">
+	           
+	           
 	               <div class="btn-group">
 		              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 		                {{ selectedApp }}&nbsp;<span class="caret"></span>
@@ -51,6 +53,34 @@
 			             <li><a style="font-size:100%;" href="#newAppModal" role="button" data-toggle="modal">+ Create</a></li>
 		              </ul>
 	               </div>
+	               
+	                <div class="btn-group">
+                      <button type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-upload"></i>
+                            Upload  
+                      </button>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#dataUploadModal" id="btn-file-upload" data-toggle="modal">CSV</a></li>
+                      </ul>
+                    </div>
+	               
+	               
+	               <div class="btn-group">
+                      <button type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-download"></i>
+                            Export  
+                      </button>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="/myaccount/classes/export/{{ selectedApp }}/{{ selectedClass }}/" id="btn-file-download">CSV</a></li>
+                      </ul>
+                    </div>
+	               
+	               <button id="delete-class" class="btn btn-tertiary disabled" ng-click="deleteClass()">Delete Class</button>
+	               <button id="delete-objects" class="btn btn-tertiary disabled" ng-click="deleteObjects()">Delete Objects</button>
+	               
+	               
+	               
+	               
 	            </div>
 	     </div>
 	

@@ -50,7 +50,7 @@ $(function () {
 		$.ajax({
 			
 			type:"POST",
-			url: "/api/v1/apps/" + appname + "/",
+			url: "/api/v2/apps/" + appname + "/",
 			context: document.body
 			
 		}).success(function(data){
@@ -120,8 +120,8 @@ function update_apps_list($scope, $store){
 		  ///// Get apps list from the server
 		  myspinner.spin($("#spinner")[0]);
 		  
-		  $.get("/api/v1/apps/", function(data){
-			  applist = data["result"];
+		  $.get("/api/v2/apps/", function(data){
+			  applist = data["results"];
 			  myspinner.stop();
 			 $scope.$apply(function(){
 				 $scope.apps = applist; 
