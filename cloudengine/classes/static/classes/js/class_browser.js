@@ -64,12 +64,12 @@ classBrowserApp.controller('classListCtrl', function classListCtrl($scope) {
 		  $scope.currAppObject = $app_object;
 		  
 		  $.ajax({
-		         url: "/api/v1/classes/",
+		         url: "/api/v2/classes/",
 		         type: "GET",
 		         beforeSend: function(xhr){xhr.setRequestHeader('AppId', $app_object.key);},
 		         success: function(data) {
 		        	myspinner.stop();
-		        	classlist = data["result"];
+		        	classlist = data["results"];
 				  	$scope.$apply(function(){
 				  		console.log(classlist);
 					  	$scope.classes = classlist;
