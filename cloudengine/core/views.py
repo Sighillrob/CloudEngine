@@ -51,25 +51,26 @@ class CreateAppView(TemplateView):
             self.form = form
         
         return self.get(request)
-    
-class AppView(TemplateView):
-    template_name= "app.html"
-    
-    def get_context_data(self, app_name):
-        return {"app_name" : app_name}
-        
-    def delete(self, request, app_name):
-        print "app dlete called"
-        return HttpResponse("app  delete method called")
 
-    
+
 class AppSettingsView(TemplateView):
     template_name= "app_settings.html"
 
     def get_context_data(self, app_name):
         app = CloudApp.objects.get(name=app_name)
-        token = Token.objects.get()
+        apps = CloudApp.objects.all()
+        token = Token.objects.all()[0]
         return { 'app_name': app_name, 'app': app,
-                'token': token}
+                'api_key': token, 'apps': apps}
 
-        
+
+class AppsBrowser(TemplateView):
+    template_name = "apps.html"
+
+    def get_context_data(self):
+        apps = CloudApp.objects.all()
+        c = {'apps' : apps}
+        return c
+    
+    
+    

@@ -1,7 +1,8 @@
 from django.conf.urls import patterns, url, include
 from cloudengine.decorators import admin_view
 from cloudengine.core.views import (CreateAppView, 
-                AdminHomeView, AppView, AppSettingsView)
+                AdminHomeView, AppSettingsView,
+                AppsBrowser)
 
 urlpatterns = patterns('',
 
@@ -9,8 +10,6 @@ urlpatterns = patterns('',
                             name="cloudengine-admin-home"),
                         
                         url(r'^create_app/$', CreateAppView.as_view()),
-                        url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/$', 
-                            AppView.as_view(), name="cloudengine-app-view"),
                        
                        url(r'^classes/', 
                             include('cloudengine.classes.urls')),
@@ -24,6 +23,11 @@ urlpatterns = patterns('',
                        url(r'^users/$', 
                             include('cloudengine.users.urls')),
                        
-                       url(r'^apps/(?P<app_name>[a-zA-Z0-9_\-]+)/settings/$', 
-                            AppSettingsView.as_view(), name="cloudengine-app-settings"),
+                       url(r'^apps/$', admin_view(AppsBrowser.as_view()), 
+                            name="cloudengine-apps-browser"),
+                       
+                        url(r'^apps/(?P<app_name>[a-zA-Z0-9]+)/$', 
+                                    admin_view(AppSettingsView.as_view()), name='cloudengine-app-settings'),
+    
+                     
                        )
