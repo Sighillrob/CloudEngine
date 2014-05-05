@@ -6,6 +6,8 @@ from rest_framework import status
 from cloudengine.classes.manager import ClassesManager
 from cloudengine.core.cloudapi_view import CloudAPIView
 from cloudengine.core.utils import paginate
+from cloudengine.classes.exceptions import (
+            InvalidObjectError, InvalidSchemaError)
 
 logger = logging.getLogger("cloudengine")
 
@@ -85,10 +87,17 @@ class ClassView(CloudAPIView):
                             exception=True)
         try:
             objid = manager.add_object(app.name, cls, new_obj)
+        except InvalidObjectError:
+            return Response({"error": "Invalid object"}, 
+                            status= status.HTTP_400_BAD_REQUEST)
+        except InvalidSchemaError as e:
+            return Response({"error": str(e)},
+                            status= status.HTTP_400_BAD_REQUEST)
         except Exception as e:
+            logger.error("Error while adding object to db: %s"%str(e))
             return Response({
-                "error": str(e)},
-                status=status.HTTP_400_BAD_REQUEST
+                "error": "Internal server error"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
                             )
         return Response({"_id": str(objid)}, status=201)
 
