@@ -4,6 +4,26 @@
         DataBrowser - CloudEngine
  {% endblock %}
 
+{% block style %}
+<style type="text/css">
+
+.check-icon:hover .fa-check,
+.check-icon .fa-check-square {
+    display: none;
+}
+.check-icon:hover .fa-check-square {
+    display: inline;
+}
+
+.table-checkable tbody > tr.checked > td {
+	background-color: #474747;
+	color: #ffffff;
+
+}
+
+</style>
+
+{% endblock %}
 
 {% block page_content %}    
 
@@ -13,9 +33,12 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
+	
 	<div ng-app="classBrowserApp" ng-controller="classListCtrl">
+	
 	{% verbatim %}        
-		<div class="row">
+	
+		<div class="row" style="margin-bottom: 20px;">
 	           <div class="col-md-12">
 	               <div class="btn-group">
 		              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -30,13 +53,170 @@
 	               </div>
 	            </div>
 	     </div>
+	
 	{% endverbatim %}
+	
+	
+			<div id="spinner"></div>
+            <div class="row">
+            
+            
+                 <div class="col-md-3">
+
+                    <div class="portlet">
+
+                        <div class="portlet-header">
+
+                            <h4>
+                                <i class="fa fa-table"></i>
+                                Data Classes
+                            </h4>
+
+                        </div> <!-- /.portlet-header -->
+
+                        <div class="portlet-content">                       
+
+                            <div class="table-responsive">
+{% verbatim %}
+                            <table 
+                                id="classes-table" 
+                                class="table table-striped table-bordered table-hover table-highlight table-checkable" 
+                                data-provide="datatable" 
+                                data-display-rows="10"
+                                data-info="true"
+                                data-search="true"
+                                data-length-change="true"
+                                data-paginate="true"
+                            >
+                                    <thead>
+                                        <tr>
+                                           
+                                            <!-- th data-filterable="true" data-sortable="true" data-direction="desc">Class</th -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                     <tr ng-repeat="cls in classes">
+                                           
+                                           <td class="check-icon" style="width:10px;" ng-click="selectClass(cls, $index)">
+                                                <i class="fa fa-check"></i>
+                                                <i class="fa fa-check-square"></i>
+                                           </td>
+                                           
+                                            <td class="cls-selected-{{cls.selected}}" >
+                                            {{cls}}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                       </table>
+
+                                 </div>
+                           </div>
+                       </div>
+                </div>
+                                    
+                                    
+                                    
+
+                <div class="col-md-9">
+
+                    <div class="portlet">
+
+                        <div class="portlet-header">
+
+                            <h4>
+                                <i class="fa fa-table"></i>
+                                {{selectedClass}} Objects
+                            </h4>
+
+                        </div> <!-- /.portlet-header -->
+
+                        <div class="portlet-content">                       
+
+                            
+                            <div class="table-responsive">
+                            
+                            <div class="scroll-objects">
+                            
+                            <table 
+                                id="obj-table" 
+                                class="table table-striped table-bordered table-hover table-highlight table-checkable" 
+                                data-provide="datatable" 
+                                data-info="true"
+                                data-search="true"
+                                data-length-change="true"
+                            >
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th data-filterable="true" data-sortable="true" data-direction="desc">{{ id_field }}</th>
+                                            <th data-filterable="true" data-sortable="true" data-direction="desc" ng-repeat="field in object_fields">{{field}} ({{schema[field]}})</th>
+                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    
+                                        <tr ng-repeat="obj in obj_list">
+                                            <td class="check-icon" style="width:10px;" ng-click="selectObject(obj['_id'], $index)">
+                                                <i class="fa fa-check"></i>
+                                                <i class="fa fa-check-square"></i>
+                                           </td>
+                                            <td>{{obj["_id"]}}</td>
+		                                    <td ng-repeat="field in object_fields" editable-text="obj[field]"  onbeforesave="updateObject(obj['_id'], field, $data)">{{obj[field]}}</td>
+		                                </tr>
+		                                
+                                    </tbody>
+                                </table>
+                                </div>
+                            </div> <!-- /.table-responsive -->
+                            
+                            <div id="page-info"></div>
+                            
+                             <div class="btn-group pull-right" id="btn-paginator" style="margin-top: 10px; display: none">
+	                              <button type="button" id="btn-paginator-prev" class="btn btn-default" ng-click="previousPage()">
+	                              <i class="fa fa-arrow-left"></i>
+	                              Previous</button>
+	                              <button type="button" id="btn-paginator-next" class="btn btn-default" ng-click="nextPage()">
+	                              Next
+	                              <i class="fa fa-arrow-right"></i>
+	                              </button>
+                            </div>
+
+                        </div> <!-- /.portlet-content -->
+{% endverbatim %}
+                    </div> <!-- /.portlet -->
+
+                
+
+                </div> <!-- /.col -->
+
+            </div> <!-- /.row -->
+			
+	
+	
+	
 			
 	</div>
 {% endblock %}
 
 
 {% block scripts %}
+
+<script src="/static/cloudengine/js/json2.js"></script>
+
+
+<script type="text/javascript">
+{% if curr_app %}
+$curr_app = "{{ curr_app }}";
+{% else %}
+$curr_app = null;
+{% endif %}
+
+{% if klass %}
+$klass = "{{ klass }}";
+{% else %}
+$klass = null;
+{% endif %}
+</script>
 
 <script src="/static/classes/js/class_browser.js"></script>
 {% endblock %}
