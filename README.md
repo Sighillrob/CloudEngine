@@ -61,7 +61,6 @@ make sure your SECRET_KEY is a random secret string
 	    # Use hyperlinked styles by default.
 	    # Only used if the `serializer_class` attribute is not set on a view.
 	    'DEFAULT_AUTHENTICATION_CLASSES': (
-	        #'rest_framework.authentication.BasicAuthentication',
 	        'rest_framework.authentication.TokenAuthentication',
 	        'rest_framework.authentication.SessionAuthentication',
 	    ),
@@ -72,13 +71,14 @@ make sure your SECRET_KEY is a random secret string
 	    # Use Django's standard `django.contrib.auth` permissions,
 	    # or allow read-only access for unauthenticated users.
 	    'DEFAULT_PERMISSION_CLASSES': [
-	        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
 	        'rest_framework.permissions.IsAuthenticated',
 	    ]
 	}
 
 	
 	EMAIL_VERIFICATION_DAYS = 7
+	
+	PAGINATE_BY = 10
 	
 
 If you want to use Amazon S3 as your primary file storage service, also add the following settings and fill in your amazon credentials at appropriate places.
