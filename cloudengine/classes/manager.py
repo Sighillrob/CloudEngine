@@ -6,9 +6,6 @@ from cloudengine.classes.utils import validate_db_name
 from cloudengine.classes.exceptions import (
                 InvalidObjectError, InvalidSchemaError)
 
-
-
-
             
 class SchemaHandler(object):
     client = pymongo.MongoClient(settings.MONGO_HOST)
@@ -42,12 +39,12 @@ class SchemaHandler(object):
             t = type(value)
             return type_map[t]
 
-    def valid_schema(self, collection_name, klass, obj):
+    def valid_schema(self, app_name, klass, obj):
         
-        db = self.client["schema"]
-        collection = db[collection_name]
-        schema = collection.find_one({"_user_collection": klass},
-                                     {"_user_collection": False}
+        db = self.client[app_name]
+        collection = db["schema"]
+        schema = collection.find_one({"_collection": klass},
+                                     {"_collection": False}
                                      )
         keys = obj.keys()
         
@@ -70,7 +67,7 @@ class SchemaHandler(object):
             
             if schema_modified:
                 print "updating schema"
-                collection.update({"_user_collection": klass},
+                collection.update({"_collection": klass},
                               {"$set": schema_modified})
         else:
             # A new collection is being created
@@ -81,18 +78,18 @@ class SchemaHandler(object):
                 curr_type = self.get_data_type(curr_value)
                 schema[key] = curr_type
             
-            schema["_user_collection"] = klass
+            schema["_collection"] = klass
             print "inserting schema"
             collection.insert(schema)
             
         return True
 
     # todo: add collection name validation similar to validate_db_name??
-    def get_class_schema(self, db_name, klass):
-        db = self.client["schema"]
-        collection = db[db_name]
-        schema = collection.find_one({"_user_collection": klass},
-                                     {"_user_collection": False, 
+    def get_class_schema(self, app_name, klass):
+        db = self.client[app_name]
+        collection = db["schema"]
+        schema = collection.find_one({"_collection": klass},
+                                     {"_collection": False, 
                                       "_id": False}
                                      )
         if schema:
@@ -102,7 +99,7 @@ class SchemaHandler(object):
             self.logger.info("Schema doesn't exist. Creating new schema")
             schema = {}
             # check if there are any documents present under this collection
-            db = self.client[db_name]
+            db = self.client[app_name]
             collection = db[klass]
             if not collection.find_one():
                 self.logger.info("No existing documents found. Schema cannot be created")
@@ -128,18 +125,18 @@ class SchemaHandler(object):
                     
             #save this schema in db
             coll_schema = copy.deepcopy(schema)
-            coll_schema["_user_collection"] = klass
+            coll_schema["_collection"] = klass
             
             db = self.client["schema"]
-            collection = db[db_name]
+            collection = db[app_name]
             collection.insert(coll_schema)
             
             return schema
         
-    def remove_schema(self, collection_name, klass):
-        db = self.client["schema"]
-        coll = db[collection_name]
-        coll.remove({"_user_collection": klass})
+    def remove_schema(self, app_name, klass):
+        db = self.client[app_name]
+        coll = db["schema"]
+        coll.remove({"_collection": klass})
         
                     
 
@@ -236,7 +233,6 @@ class ClassesManager(object):
             raise Exception("Invalid object. _id is a reserved field")
         collection.update({"_id": ObjectId(id)},
                           {"$set": obj})               # todo: set multi = true??
-        
         
     def delete_object(self, db, klass, id):
         db = validate_db_name(db)

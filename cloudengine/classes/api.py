@@ -161,14 +161,11 @@ class ObjectView(CloudAPIView):
 class SchemaView(CloudAPIView):
     
     def get(self, request, cls):
-        db_name = request.user.username
-        logger.info("get request from %s for class %s" %
-                    (db_name, cls))
         app = request.META.get('app', None)
         if not app:
             return Response({'error': 'App id not provided'}, status=400)
         schema_handler = SchemaHandler()
-        schema = schema_handler.get_class_schema(db_name, cls)
+        schema = schema_handler.get_class_schema(app.name, cls)
         return Response(schema)
         
         
