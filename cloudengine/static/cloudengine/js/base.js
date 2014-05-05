@@ -105,7 +105,7 @@ function sameOrigin(url) {
 
 function update_apps_list($scope, $store){
 
-	  $my_session_apps = $store.get("session_apps");
+	//  $my_session_apps = $store.get("session_apps");
 	  
 	  // todo: update the localStorage applist when an app is created or deleted 
 	  
@@ -121,12 +121,13 @@ function update_apps_list($scope, $store){
 		  myspinner.spin($("#spinner")[0]);
 		  
 		  $.get("/api/v1/apps/", function(data){
-			  applist = data["results"];
-			  
+			  applist = data["result"];
 			  myspinner.stop();
-			  $scope.$apply(function(){
-				  	$scope.apps = applist;
-			    });
+			 $scope.$apply(function(){
+				 $scope.apps = applist; 
+			 });
+			  
+			 
 			  //$store.set("session_apps", applist);
 			  
 			});  

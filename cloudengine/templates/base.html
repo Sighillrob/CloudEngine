@@ -58,10 +58,10 @@
                             <a href="{% url 'cloudengine-app-data' %}"><i class="fa fa-table fa-fw"></i> Data browser</a>
                         </li>
                         <li>
-                            <a href="index.html"><i class="fa fa-files-o fa-fw"></i> Files browser</a>
+                            <a href="{% url 'cloudengine-app-files' %}"><i class="fa fa-files-o fa-fw"></i> Files browser</a>
                         </li>
                         <li>
-                            <a href="index.html"><i class="fa fa-cloud-download fa-fw"></i> Push notifications</a>
+                            <a href="{% url 'cloudengine-app-push' %}"><i class="fa fa-cloud-download fa-fw"></i> Push notifications</a>
                         </li>
                         
                         <li>
@@ -89,20 +89,20 @@
             <h3 class="modal-title">Create new app</h3>
           </div>
          
-          <form id="new_app_form" data-parsley-validate>
+          
             <div class="modal-body">
-                    
+          		<form id="new_app_form" data-parsley-validate>          
                     <div class="form-group">
                          <label for="input-app-name">App Name</label>
                          <input type="text" id="input-app-name" maxlength="100" class="form-control" data-parsley-type="alphanum" required />
                      </div>
-           
+          		</form> 
 	          </div>
 	           <div class="modal-footer">
 	            <button type="button" class="btn btn-tertiary" data-dismiss="modal">Close</button>
 	            <button type="submit" class="btn btn-primary" id="btn-create-app">Create App</button>
 	          </div>
-          </form>
+          
            
           
         </div><!-- /.modal-content -->
