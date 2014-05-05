@@ -6,28 +6,23 @@ $curr_page = 0;
 $page_length = 10; /* todo: this has to be same as server */
 
 
-$.ready(function(){		
-	
-	$("#btn-file-upload").click(function(){
-		if($app_object == null){
-			alert("Please select an app first");
-			return false;
-		}
-	});
-	
-	$("#btn-file-download").click(function(){
-		if($app_object == null){
-			alert("Please select an app first");
-			return false;
-		}
-		if($curr_class == null){
-			alert("Please select a class first");
-			return false;
-		}
-	});
-		
-}());
+$("#btn-file-upload").click(function(){
+	if($app_object == null){
+		alert("Please select an app first");
+		return false;
+	}
+});
 
+$("#btn-file-download").click(function(){
+	if($app_object == null){
+		alert("Please select an app first");
+		return false;
+	}
+	if($curr_class == null){
+		alert("Please select a class first");
+		return false;
+	}
+});
 
 var classBrowserApp = angular.module('classBrowserApp', []);
 
@@ -63,7 +58,6 @@ classBrowserApp.controller('classListCtrl', function classListCtrl($scope) {
 		  
 //		  //$store.set("session_app", app);
 		  
-		  /* disable the class delete button when a new app is selected */
 		  /* disable the class delete button when a new app is selected */
 		  var del_btn = $('#delete-class')[0];
 		  var is_disabled = del_btn.className.indexOf("disabled");
@@ -408,7 +402,150 @@ classBrowserApp.controller('classListCtrl', function classListCtrl($scope) {
 		  
 	  }
 	  
+
+	  $scope.deleteClass = function(){
+		  
+			var del = confirm("Warning: All objects of this class will be deleted.\n" +
+			"Are you sure you want to delete this class?");
+			if(del == true && $curr_class != null){
+				
+				myspinner.spin($("#spinner")[0]);
+
+				$.ajax({
+			         url: "/api/v2/classes/" + $curr_class + "/",
+			         type: "DELETE",
+			         beforeSend: function(xhr, settings){
+			        	 if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+			 	            // Send the token to same-origin, relative URLs only.
+			 	            // Send the token only if the method warrants CSRF protection
+			 	            // Using the CSRFToken value acquired earlier
+			 	        	var csrftoken = $.cookie('csrftoken');
+			 	            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			 	        }
+			        	 xhr.setRequestHeader('AppId', $scope.currAppObject.key);
+			        	 
+			         },
+			         success: function(data) { 
+			        	myspinner.stop();
+			        	
+			        	$scope.$apply(function(){
+			        		var index = $scope.classes.indexOf($scope.selectedClass);
+				        	if(index > -1){
+				        		$scope.classes.splice(index, 1);
+				        		
+				        	}
+				        	$scope.object_fields = [];
+				        	$scope.obj_list = [];
+				        	$scope.selectedClass = "";
+				        	$curr_class = "";
+				        	$scope.id_field = null;
+				        	$scope.prev_page = $scope.next_page = null;
+				        	
+					    }); 
+			        	
+			      
+			        	 /* disable delete buttons */
+			        	 var del_btn = $('#delete-class')[0];
+			       	  	 var is_disabled = del_btn.className.indexOf("disabled");
+			       	  	if(is_disabled == -1){
+			       	  		del_btn.className += " disabled";
+			       	  	}
+			        	
+				       	 del_btn = $('#delete-objects')[0];
+			       	  	 var is_disabled = del_btn.className.indexOf("disabled");
+			       	  	if(is_disabled == -1){
+			       	  		del_btn.className += " disabled";
+			       	  	}
+			       	  	
+			       	  	$("#page-info").text("");
+			       	  	$("#btn-paginator").hide();
+			       	  	
+					  },
+					  error: function(xhr, status, err){
+						  
+						  myspinner.stop();
+						  alert("Unable to complete operation. Server Error!");
+					  }
+			         
+			      });
+				
+			}
+			else{
+				return false;
+			}
+		  
+	  }
 	  
+	  $scope.deleteObjects = function(){
+
+			var del = confirm("Warning: All selected objects will be deleted.\n" +
+			"Are you sure you want to delete these objects?");
+			
+			if(del == true && $curr_class != null){
+				
+				myspinner.spin($("#spinner")[0]);
+				for(i=0; i<$selected_objects.length; i++){
+					var successCount = 0;
+					$.ajax({
+				         url: "/api/v2/classes/" + $curr_class + "/" + $selected_objects[i] + "/" ,
+				         type: "DELETE",
+				         context: successCount,
+				         beforeSend: function(xhr, settings){
+				        	 if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+				 	            // Send the token to same-origin, relative URLs only.
+				 	            // Send the token only if the method warrants CSRF protection
+				 	            // Using the CSRFToken value acquired earlier
+				 	        	var csrftoken = $.cookie('csrftoken');
+				 	            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				 	        }
+				        	 xhr.setRequestHeader('AppId', $scope.currAppObject.key);
+				        	 
+				         },
+				         success: function(data) { 
+				        	 successCount++;
+				        	 if(successCount == $selected_objects.length){
+				        		 myspinner.stop();
+				        		 $scope.$apply(function(){
+				        			for(i = 0; i < $selected_objects.length; i++){
+				        				
+				        				objid = $selected_objects[i];
+				        				for(j = 0; j < $scope.obj_list.length; j++){
+				        					
+				        					obj = $scope.obj_list[j];
+				        					if(obj["_id"] == objid){
+				        						$scope.obj_list.splice(j, 1);
+				        						break;
+				        					}
+				        				}
+				        				
+				        			} 
+				        			
+				        			$selected_objects = [];
+				        		 });
+				        		 
+				        		 
+				        		 var del_btn = $('#delete-objects')[0];
+				        		  del_btn.className += " disabled";
+				        		 
+				        	
+				        	}
+						  },
+						  error: function(xhr, status, err){
+							  
+							  myspinner.stop();
+							  alert("Unable to complete operation. Server Error!");
+							  console.log("error " + status);
+							  console.log("error " + err);
+						  }
+				      });
+				}
+			}
+			else{
+				return false;
+			}
+		  
+		  
+	  }
 	  
 	
 })
