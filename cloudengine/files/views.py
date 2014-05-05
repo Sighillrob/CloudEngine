@@ -24,8 +24,8 @@ class AppFilesView(TemplateView):
         except Exception:
             self.manager = FilesManager()
             
-    
-    def get_context_data(self, app_name):
+    '''
+    def get_context_data(self):
         app  = CloudApp.objects.get(name = app_name)
         files = CloudFile.objects.filter(app = app)
         storage = 0
@@ -35,7 +35,7 @@ class AppFilesView(TemplateView):
                 'form' : self.form, 'msg': self.msg,
                 'storage': storage
                 }
-
+    '''
     def post(self, request, *args, **kwargs):
         # validate app name
         myfile = request.FILES.get("file", None)
