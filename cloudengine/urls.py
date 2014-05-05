@@ -13,7 +13,7 @@ urlpatterns = patterns(
     url(r'^api-auth/', include(
         'rest_framework.urls', namespace='rest_framework')),
     url(r'^socket.io/', 'cloudengine.push.views.socketio_view'),
-    url(r'^api/v1/', include('cloudengine.api_v1_urls')),
+    url(r'^api/v2/', include('cloudengine.api_v2_urls')),
     url(r'^keys/$',
         AccountKeysView.as_view(), name='myaccount-keys'),
     url(r'^accounts/', include(

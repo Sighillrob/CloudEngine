@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from cloudengine.classes.manager import ClassesManager
 from cloudengine.core.cloudapi_view import CloudAPIView
+from cloudengine.core.utils import paginate
 
 logger = logging.getLogger("cloudengine")
 
@@ -19,7 +20,7 @@ class AppClassesView(CloudAPIView):
             return Response({'detail': 'App id not provided'}, 
                                     status=401)
         app_classes = manager.get_classes(app.name)
-        return Response({"result": app_classes})
+        return Response(paginate(request, app_classes))
 
 
 class ClassView(CloudAPIView):
@@ -61,14 +62,14 @@ class ClassView(CloudAPIView):
             return Response({'detail': str(e)},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             exception=True)
-        return Response({"result": res})
+        return Response(paginate(request, res))
 
     def delete(self, request, cls):
         app = request.META.get('app', None)
         if not app:
             return Response({'detail': 'App id not provided'}, status=400)
         manager.delete_class( app.name, cls)
-        return Response()
+        return Response({"result" : "The class was deleted successfully"})
 
     def post(self, request, cls):
         app = request.META.get('app', None)
@@ -134,12 +135,13 @@ class ObjectView(CloudAPIView):
                     "detail": "Invalid object. _id/app_id is a reserved field"},
                     status=status.HTTP_400_BAD_REQUEST
                                 )
-        return Response()
+        return Response({"_id": str(objid), "result": "Object updated successfully"}, 
+                        status=200)
 
     def delete(self, request, cls, objid):
         app = request.META.get('app', None)
         if not app:
             return Response({'detail': 'App id not provided'}, status=400)
         manager.delete_object(app.name, cls, objid)
-        return Response()
+        return Response({"result": "Object deleted successfully"})
 

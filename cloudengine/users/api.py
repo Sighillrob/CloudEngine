@@ -10,7 +10,10 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, AnonymousUser
 from serializers import UserSerializer
+from cloudengine.core.utils import paginate
 from models import AppUser
+
+
 
 class UserClassView(CloudAPIView):
     
@@ -21,7 +24,7 @@ class UserClassView(CloudAPIView):
         app_users = AppUser.objects.filter(app = app)
         users = [app_user.user for app_user in app_users]
         serializer = UserSerializer(users, many=True)
-        return Response({"result": serializer.data})
+        return Response(paginate(request, serializer.data))
         
     def post(self, request):
         try:

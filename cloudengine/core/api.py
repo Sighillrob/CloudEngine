@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from cloudengine.core.models import CloudApp
 from cloudengine.classes.manager import ClassesManager
 from cloudengine.files.utils import delete_app_files
-
+from cloudengine.core.utils import paginate
 
 # View for creating new apps
 class AppView(APIView):
@@ -45,4 +45,4 @@ class AppListView(APIView):
             for prop in app_props:
                 new_app[prop] = getattr(app, prop)
             app_list.append(new_app)
-        return Response({'result': app_list})
+        return Response(paginate(request, app_list))

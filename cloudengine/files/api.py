@@ -26,19 +26,6 @@ class FileListView(CloudAPIView, generics.ListCreateAPIView):
         cloudapp = CloudApp.objects.get(name=app.name)
         self.queryset = CloudFile.objects.filter(app=cloudapp)
         return super(FileListView, self).get(request, *args, **kwargs)
-        '''
-        result = []
-        try:
-            fileslist = CloudFile.objects.filter(app=cloudapp)
-            for file in fileslist:
-                result.append({"name": file.name,
-                               "size": file.size,
-                               "url": file.user_url,
-                               })
-        except CloudFile.DoesNotExist, e:
-            pass
-        return Response({"result": result})
-        '''
 
 
 # make sure filename in the newly generated url (before query string) does
@@ -47,6 +34,20 @@ class FileListView(CloudAPIView, generics.ListCreateAPIView):
 class FileView(CloudAPIView):
 
     manager = FilesManager()
+    
+    def get(self, request, filename):
+        usr = request.user.username
+        logger.info("file get received from user %s for file %s" %(usr, filename))
+        app = request.META.get('app', None)
+        if not app:
+            # We should not have reached here anyway
+            return Response({'detail': 'App id not provided'}, status=401)
+        try:
+            cloudfile = CloudFile.objects.get(name=filename, app=app)
+        except CloudFile.DoesNotExist:
+            return Response({'detail': 'File not found'}, status=404)
+        return Response({"url": cloudfile.url})
+    
     
     def post(self, request, filename):
         content_length = request.META.get("CONTENT_LENGTH", 0)
@@ -78,6 +79,6 @@ class FileView(CloudAPIView):
             return Response({'detail': str(e)}, status=404)
         except Exception:
             return Response({'detail': 'Error deleting file'}, status=500)
-        return Response()
+        return Response({"result": "File deleted successfully"})
 
 
