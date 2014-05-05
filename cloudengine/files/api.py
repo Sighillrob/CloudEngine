@@ -21,7 +21,7 @@ class FileListView(CloudAPIView, generics.ListCreateAPIView):
     def get(self, request, *args, **kwargs):
         app = request.META.get('app', None)             #todo: handle checking of appid present in a middleware
         if not app:
-            return Response({"detail": "Invalid app id provided"},
+            return Response({"error": "Invalid app id provided"},
                             status=400)
         cloudapp = CloudApp.objects.get(name=app.name)
         self.queryset = CloudFile.objects.filter(app=cloudapp)
@@ -41,11 +41,11 @@ class FileView(CloudAPIView):
         app = request.META.get('app', None)
         if not app:
             # We should not have reached here anyway
-            return Response({'detail': 'App id not provided'}, status=401)
+            return Response({'error': 'App id not provided'}, status=401)
         try:
             cloudfile = CloudFile.objects.get(name=filename, app=app)
         except CloudFile.DoesNotExist:
-            return Response({'detail': 'File not found'}, status=404)
+            return Response({'error': 'File not found'}, status=404)
         return Response({"url": cloudfile.url})
     
     
@@ -56,15 +56,15 @@ class FileView(CloudAPIView):
         app = request.META.get('app', None)
         if not app:
             # We should not have reached here anyway
-            return Response({'detail': 'App id not provided'}, status=401)
+            return Response({'error': 'App id not provided'}, status=401)
         cont_file = ContentFile(body)
         try:
             url = self.manager.upload(filename, cont_file, app)
         except FileTooLarge as e:
-            return Response({'detail': str(e)}, 
+            return Response({'error': str(e)}, 
                             status=401)
         except Exception:
-            return Response({'detail': 'Error uploading file'}, status=500)
+            return Response({'error': 'Error uploading file'}, status=500)
 
         return Response({"url": url}, status=201)
     
@@ -72,13 +72,13 @@ class FileView(CloudAPIView):
         app = request.META.get('app', None)
         if not app:
             # We should not have reached here anyway
-            return Response({'detail': 'App id not provided'}, status=401)
+            return Response({'error': 'App id not provided'}, status=401)
         try:
             self.manager.delete(filename, app)
         except FileNotFound as e:
-            return Response({'detail': str(e)}, status=404)
+            return Response({'error': str(e)}, status=404)
         except Exception:
-            return Response({'detail': 'Error deleting file'}, status=500)
+            return Response({'error': 'Error deleting file'}, status=500)
         return Response({"result": "File deleted successfully"})
 
 

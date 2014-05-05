@@ -36,7 +36,7 @@ class UserClassView(CloudAPIView):
             
         except Exception as e:
             self.logger.error("Unable to decode object. Error: %s"%str(e))
-            return Response({"detail": "Invalid object."},
+            return Response({"error": "Invalid object."},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
         app =  request.META['app']
@@ -64,7 +64,7 @@ class UserClassView(CloudAPIView):
             users.delete()
         except Exception:
             pass
-        return Response({"detail": "All users of this app are deleted"})
+        return Response({"result": "All users of this app are deleted"})
 
 
 
@@ -76,7 +76,7 @@ class LoginView(CloudAPIView):
             credentials = json.loads(request.body)
         except Exception, e:
             self.logger.error("Unable to decode object. Error: %s"%str(e))
-            return Response({"detail": "Invalid object."},
+            return Response({"error": "Invalid object."},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
         try:
@@ -85,7 +85,7 @@ class LoginView(CloudAPIView):
             password = credentials["password"]
         except KeyError:
             self.logger.error("Error: %s"%str(e))
-            return Response({"detail": "username/password field missing"},
+            return Responseerrorail": "username/password field missing"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
         user = authenticate(username=username, password=password)
@@ -95,11 +95,11 @@ class LoginView(CloudAPIView):
                 request.session.save()
                 return Response({settings.SESSION_COOKIE_NAME : request.session.session_key})
             else:
-                return Response({"detail": "User account is inactive"},
+                return Response({"error": "User account is inactive"},
                             status=status.HTTP_400_BAD_REQUEST,
                             )
         else:
-            return Response({"detail": "incorrect username/password"},
+            return Response({"error": "incorrect username/password"},
                             status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -107,7 +107,7 @@ class LogoutView(CloudAPIView):
     
     def get(self, request):
         logout(request)
-        return Response({"detail": "User logged out successfully"})
+        return Response({"result": "User logged out successfully"})
 
 
 class CurrentUserView(CloudAPIView):
@@ -117,7 +117,7 @@ class CurrentUserView(CloudAPIView):
         print user.username
         print type(user)
         if isinstance(user, AnonymousUser):
-            return Response({"detail": "user not logged in"})
+            return Response({"error": "user not logged in"})
         
         serializer = UserSerializer(user)
         return Response({"result": serializer.data})
@@ -137,7 +137,7 @@ class UserDetailView(CloudAPIView):
             data = JSONParser().parse(stream)
         except Exception as e:
             self.logger.error("Unable to decode object. Error: %s"%str(e))
-            return Response({"detail": "Invalid object."},
+            return Response({"error": "Invalid object."},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
         # If valid, update the user
@@ -145,18 +145,18 @@ class UserDetailView(CloudAPIView):
         for key in data.keys():
             setattr(user, key, data[key])
         user.save()
-        return Response({"detail": "User data updated successfully"})
+        return Response({"result": "User data updated successfully"})
         
 
     def delete(self, request, id):
         try:
             user = AppUser.objects.get(pk = id)
         except AppUser.DoesNotExist:
-            return Response({"detail": "Invalid user id"},
+            return Response({"error": "Invalid user id"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
         user.delete()
-        return Response({"detail": "User deleted successfully"})
+        return Response({"result": "User deleted successfully"})
 
 
 

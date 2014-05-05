@@ -17,7 +17,7 @@ class AppClassesView(CloudAPIView):
     def get(self, request):
         app = request.META.get('app',"")
         if not app:
-            return Response({'detail': 'App id not provided'}, 
+            return Response({'error': 'App id not provided'}, 
                                     status=401)
         app_classes = manager.get_classes(app.name)
         return Response(paginate(request, app_classes))
@@ -30,7 +30,7 @@ class ClassView(CloudAPIView):
     def get(self, request, cls):
         app = request.META.get('app', None)
         if not app:
-            return Response({'detail': 'App id not provided'}, status=400)
+            return Response({'error': 'App id not provided'}, status=400)
         # Django automatically urldecodes query string
         query_str = request.GET.get('query', self.DEFAULT_QUERY)
         logger.info("query string received: %s" % query_str)
@@ -38,7 +38,7 @@ class ClassView(CloudAPIView):
             # urlparse the query
             query = json.loads(query_str)
         except Exception:
-            return Response({"detail": "Invalid query"},
+            return Response({"error": "Invalid query"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
         
@@ -51,7 +51,7 @@ class ClassView(CloudAPIView):
             order_by = order_obj.keys()[0]
             order = order_obj.values()[0]
         except AssertionError:
-            return Response({'detail': 'orderby option takes only one property value'},
+            return Response({'error': 'orderby option takes only one property value'},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
         except Exception, e:
@@ -59,7 +59,7 @@ class ClassView(CloudAPIView):
         try:
             res = manager.get_class(app.name, cls, query, order_by, order)
         except Exception, e:
-            return Response({'detail': str(e)},
+            return Response({'error': str(e)},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             exception=True)
         return Response(paginate(request, res))
@@ -67,27 +67,27 @@ class ClassView(CloudAPIView):
     def delete(self, request, cls):
         app = request.META.get('app', None)
         if not app:
-            return Response({'detail': 'App id not provided'}, status=400)
+            return Response({'error': 'App id not provided'}, status=400)
         manager.delete_class( app.name, cls)
         return Response({"result" : "The class was deleted successfully"})
 
     def post(self, request, cls):
         app = request.META.get('app', None)
         if not app:
-            return Response({'detail': 'App id not provided'}, status=400)
+            return Response({'error': 'App id not provided'}, status=400)
         try:
             logger.debug("request body recieved: %s"%request.body)
             new_obj = json.loads(request.body)
         except Exception, e:
             logger.error("Unable to decode object. Error: %s"%str(e))
-            return Response({"detail": "Invalid object."},
+            return Response({"error": "Invalid object."},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
         try:
             objid = manager.add_object(app.name, cls, new_obj)
         except Exception as e:
             return Response({
-                "detail": str(e)},
+                "error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST
                             )
         return Response({"_id": str(objid)}, status=201)
@@ -100,17 +100,17 @@ class ObjectView(CloudAPIView):
                     (request.user.username, objid))
         app = request.META.get('app', None)
         if not app:
-            return Response({'detail': 'App id not provided'}, status=400)
+            return Response({'error': 'App id not provided'}, status=400)
         try:
             obj = manager.get_object(app.name, cls, objid)
         except Exception, e:
-            return Response({"detail": "Invalid object id"},
+            return Response({"error": "Invalid object id"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
         if obj:
             return Response({"result": obj})
         else:
-            return Response({"detail": "Invalid object id"},
+            return Response({"error": "Invalid object id"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
 
@@ -121,18 +121,18 @@ class ObjectView(CloudAPIView):
     def put(self, request, cls, objid):
         app = request.META.get('app', None)
         if not app:
-            return Response({'detail': 'App id not provided'}, status=400)
+            return Response({'error': 'App id not provided'}, status=400)
         try:
             obj = json.loads(request.body)
         except Exception:
-            return Response({"detail": "Invalid object id"},
+            return Response({"error": "Invalid object id"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
         try:
             manager.update_object(app.name, cls, objid, obj)
         except Exception as e:
                 return Response({
-                    "detail": "Invalid object. _id/app_id is a reserved field"},
+                    "error": "Invalid object. _id/app_id is a reserved field"},
                     status=status.HTTP_400_BAD_REQUEST
                                 )
         return Response({"_id": str(objid), "result": "Object updated successfully"}, 
@@ -141,7 +141,7 @@ class ObjectView(CloudAPIView):
     def delete(self, request, cls, objid):
         app = request.META.get('app', None)
         if not app:
-            return Response({'detail': 'App id not provided'}, status=400)
+            return Response({'error': 'App id not provided'}, status=400)
         manager.delete_object(app.name, cls, objid)
         return Response({"result": "Object deleted successfully"})
 
