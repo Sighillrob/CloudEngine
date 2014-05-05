@@ -146,6 +146,7 @@ class SchemaHandler(object):
 class ClassesManager(object):
     client = pymongo.MongoClient(settings.MONGO_HOST)
     schema_handler = SchemaHandler()
+    ce_system_classes = ("schema",)
     
     def get_classes(self, db):
         db = validate_db_name(db)
@@ -154,7 +155,8 @@ class ClassesManager(object):
         app_classes = []
         for coll in collections:
             doc = db[coll].find_one()
-            if doc: app_classes.append(coll)
+            if doc and (coll not in self.ce_system_classes): 
+                app_classes.append(coll)
         return app_classes
     
     
