@@ -24,7 +24,7 @@ $("#btn-file-download").click(function(){
 	}
 });
 
-var classBrowserApp = angular.module('classBrowserApp', []);
+var classBrowserApp = angular.module('classBrowserApp', ["xeditable"]);
 
 
 classBrowserApp.controller('classListCtrl', function classListCtrl($scope) {
@@ -545,6 +545,106 @@ classBrowserApp.controller('classListCtrl', function classListCtrl($scope) {
 			}
 		  
 		  
+	  }
+	  
+
+	  $scope.updateObject = function(id, field, data){
+		  
+		  // Convert the data to proper type using the schema
+		  var curr_type = $scope.schema[field];
+		  if(curr_type == "number"){
+			  
+			  data = parseInt(data);
+			  if(isNaN(data)){
+				  alert("Incorrect data. Please enter a number");
+				  return false;
+			  }
+		  }
+		  else if(curr_type == "boolean"){
+			  if(data == "true"){
+				  data = true;
+			  }
+			  else if(data == "false") {
+				  data = false;
+			  }
+			  else{
+				  alert("Incorrect data. Boolean value must be either true or false");
+				  return false;
+			  }
+		  }
+		  else if(curr_type == "array"){
+			  
+			 
+			  
+			  try{
+				  data = JSON && JSON.parse(data) || $.parseJSON(data);
+				  if(data instanceof Array){ }
+				  else{
+					  alert("Incorrect data. Please enter an Array value.");
+					  return false;
+				  }
+			  }
+			  catch(err){
+				  alert("Incorrect data. Please enter an Array value.");
+				  return false;
+			  }
+			  
+		  }
+		  else if(curr_type == "object"){
+			  
+		
+			  
+			  try{
+				  data = JSON && JSON.parse(data) || $.parseJSON(data);
+				  
+				  if(data instanceof Object){ }
+				  else{
+					  alert("Incorrect data. Please enter an Object value.");
+					  return false;
+				  }
+			  }
+			  catch(err){
+				  alert("Incorrect data. Please enter an Object value.");
+				  return false;
+			  }
+			  
+		  }
+		  
+		  
+		   var new_obj = {};
+		   new_obj[field] = data;
+		   var send_data = JSON.stringify(new_obj);
+		   
+			myspinner.spin($("#spinner")[0]);
+			$.ajax({
+		         url: "/api/v2/classes/" + $curr_class + "/" + id + "/" ,
+		         type: "PUT",
+		         contentType: "application/json; charset=utf-8",
+		         data: send_data,
+		         dataType: 'json',
+		         beforeSend: function(xhr, settings){
+		        	 if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+		 	            // Send the token to same-origin, relative URLs only.
+		 	            // Send the token only if the method warrants CSRF protection
+		 	            // Using the CSRFToken value acquired earlier
+		 	        	var csrftoken = $.cookie('csrftoken');
+		 	            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+		 	        }
+		        	 xhr.setRequestHeader('AppId', $scope.currAppObject.key);
+		        	 
+		         },
+		         success: function(data) { 
+		        	 myspinner.stop();
+		         },
+		         error: function(xhr, status, err){
+					  
+					  myspinner.stop();
+					  alert("Unable to complete operation. Server Error!");
+					  console.log("error " + status);
+					  console.log("error " + err);
+				  }
+		     });
+		  return true;
 	  }
 	  
 	
