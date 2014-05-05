@@ -85,7 +85,7 @@ class LoginView(CloudAPIView):
             password = credentials["password"]
         except KeyError:
             self.logger.error("Error: %s"%str(e))
-            return Responseerrorail": "username/password field missing"},
+            return Response({"error": "username/password field missing"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
         user = authenticate(username=username, password=password)
