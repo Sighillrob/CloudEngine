@@ -9,7 +9,13 @@ class FilesManager(object):
     def __init__(self, backend=DefaultStorage):
         self.backend = backend()
     
-    def upload(self, filename, uploaded_file, appobj):
+    def retrieve(self, filename, appobj):
+        contents =  self.backend.retrieve(filename, appobj)
+        if not contents:
+            raise FileNotFound()
+        return contents
+                       
+    def save(self, filename, uploaded_file, appobj):
         
         if uploaded_file.size > settings.MAX_FILESIZE:
             raise FileTooLarge()
@@ -17,8 +23,6 @@ class FilesManager(object):
         return cloudfile
         
     def delete(self, filename, app):
-        try:
-            self.backend.delete(filename, app)
-        except Exception:
-            raise FileNotFound()
+        return self.backend.delete(filename, app)
+        
         

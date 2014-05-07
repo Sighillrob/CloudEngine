@@ -6,11 +6,11 @@ class BaseFileStorage(object):
     Base storage class for different file storage backends. 
     """
     
-    def upload(self, name, fileobj):
+    def save(self, name, fileobj):
         "Upload a file"
         raise NotImplementedError()
     
-    def download(self, name):
+    def retrieve(self, name):
         "Download a file"
         raise NotImplementedError()
     

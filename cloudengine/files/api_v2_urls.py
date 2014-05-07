@@ -5,7 +5,7 @@ from api import FileView, FileListView
 
 urlpatterns = patterns('',
                        url(r'^$', FileListView.as_view(), name='file-list'),
-                       url(r'^(?P<filename>[a-zA-Z0-9\-\._]+)/$',
+                       url(r'^(?P<filename>[a-zA-Z0-9_\.]+)/$',
                            FileView.as_view(), name='file-handler'),
                        )
 

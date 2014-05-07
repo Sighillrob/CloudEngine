@@ -1,3 +1,4 @@
+import mimetypes
 import logging
 from models import CloudFile
 from manager import FilesManager
@@ -5,14 +6,14 @@ from exceptions import FileTooLarge, FileNotFound
 from cloudengine.core.models import CloudApp
 from cloudengine.core.cloudapi_view import CloudAPIView
 from django.core.files.base import ContentFile
+from django.http.response import HttpResponse
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import generics
 from serializers import CloudFileSerializer
 
 logger = logging.getLogger("cloudengine")
 
-AWS_URL_EXPIRY = 3600 * 24 * 265 * \
-    20         # won't expire for a very long time
 
 #todo: test that cloudapi is compatible with generic
 class FileListView(CloudAPIView, generics.ListCreateAPIView):
@@ -41,12 +42,17 @@ class FileView(CloudAPIView):
         app = request.META.get('app', None)
         if not app:
             # We should not have reached here anyway
-            return Response({'error': 'App id not provided'}, status=401)
+            return Response({'error': 'App id not provided'}, 
+                            status=status.HTTP_400_BAD_REQUEST)
         try:
-            cloudfile = CloudFile.objects.get(name=filename, app=app)
-        except CloudFile.DoesNotExist:
-            return Response({'error': 'File not found'}, status=404)
-        return Response({"url": cloudfile.url})
+            contents = self.manager.retrieve(filename, app)
+        except FileNotFound:
+            return Response({"error": "File not found"},
+                            status=status.HTTP_404_NOT_FOUND)
+        mimetype, encoding = mimetypes.guess_type(filename)
+        response =  HttpResponse(contents, mimetype = mimetype)
+        #return Response({"url": cloudfile.url})
+        return response
     
     
     def post(self, request, filename):
@@ -59,7 +65,7 @@ class FileView(CloudAPIView):
             return Response({'error': 'App id not provided'}, status=401)
         cont_file = ContentFile(body)
         try:
-            url = self.manager.upload(filename, cont_file, app)
+            url = self.manager.save(filename, cont_file, app)
         except FileTooLarge as e:
             return Response({'error': str(e)}, 
                             status=401)
@@ -75,8 +81,8 @@ class FileView(CloudAPIView):
             return Response({'error': 'App id not provided'}, status=401)
         try:
             self.manager.delete(filename, app)
-        except FileNotFound as e:
-            return Response({'error': str(e)}, status=404)
+        except FileNotFound:
+            return Response({'error': "File not found"}, status=404)
         except Exception:
             return Response({'error': 'Error deleting file'}, status=500)
         return Response({"result": "File deleted successfully"})

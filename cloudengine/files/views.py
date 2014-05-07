@@ -1,10 +1,13 @@
+import mimetypes
 import logging
 from models import CloudFile
-from exceptions import FileTooLarge
+from exceptions import FileTooLarge, FileNotFound
 from manager import FilesManager
 from cloudengine.files.forms import FileUploadForm
 from cloudengine.core.models import CloudApp
 from django.views.generic import TemplateView
+from django.http.response import HttpResponse
+from django.shortcuts import redirect
 from django.conf import settings
 
 logger = logging.getLogger("cloudengine")
@@ -24,20 +27,20 @@ class AppFilesView(TemplateView):
         except Exception:
             self.manager = FilesManager()
             
-    '''
+    
     def get_context_data(self):
-        app  = CloudApp.objects.get(name = app_name)
-        files = CloudFile.objects.filter(app = app)
-        storage = 0
-        for file in files:
-            storage += file.size
-        return {'app_name': app_name, 'files': files,
+        curr_app = self.request.session.get("current_app", None)
+        files = []
+        if curr_app:
+            app  = CloudApp.objects.get(name = curr_app)
+            files = CloudFile.objects.filter(app = app)
+        return {'app_name': curr_app, 'files': files,
                 'form' : self.form, 'msg': self.msg,
-                'storage': storage
                 }
-    '''
+    
     def post(self, request, *args, **kwargs):
         # validate app name
+        print "post file request received"
         myfile = request.FILES.get("file", None)
         app = request.POST.get("app", "")
         appobj = self.is_validapp(app)
@@ -47,21 +50,25 @@ class AppFilesView(TemplateView):
         elif not appobj:
             error_msg = "Please select an app before uploading file."
         
-
+        
         if error_msg:
             self.msg = error_msg
-            return self.get(request, *args, **kwargs)
+            print "error is request: %s"%error_msg
+            #return self.get(request, *args, **kwargs)
+            return redirect('cloudengine-app-files')
 
         filename = self.clean_filename(myfile.name)
         try:
-            self.manager.upload(filename, myfile, appobj)
+            print "attempting to upload file"
+            self.manager.save(filename, myfile, appobj)
             self.msg = "File uploaded successfully!"
         except FileTooLarge as e:
             self.msg = str(e)
         except Exception as ex:
             self.msg = "Error uploading file"
             logger.error(str(ex))
-        return self.get(request, *args, **kwargs)
+        request.session['current_app'] = app
+        return redirect("cloudengine-app-files")
 
     def is_validapp(self, app):
         try:
@@ -71,3 +78,25 @@ class AppFilesView(TemplateView):
 
     def clean_filename(self, name):
         return name.replace(' ', '-')
+    
+
+def download_file(request, appname, filename):
+    usr = request.user.username
+    manager = FilesManager()
+    try:
+        app = CloudApp.objects.get(name=appname)
+    except CloudApp.DoesNotExist:
+        return HttpResponse("Invalid App", status=500)
+    
+    try:
+        contents = manager.retrieve(filename, app)
+    except FileNotFound:
+        return HttpResponse("File not found", status=404)
+    except Exception:
+        return HttpResponse("Internal server error", status=500)
+    
+    mimetype, encoding = mimetypes.guess_type(filename)
+    response = HttpResponse(contents, mimetype = mimetype)
+    response["Content-Disposition"] = "attachment; filename=%s"%filename
+    return response
+    
