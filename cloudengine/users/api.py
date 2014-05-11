@@ -20,36 +20,30 @@ class UserClassView(CloudAPIView):
     logger = logging.getLogger("cloudengine")
     
     def get(self, request, *args, **kwargs):
-        app = request.META["app"]
-        app_users = AppUser.objects.filter(app = app)
+        app_users = AppUser.objects.filter(app = request.app)
         users = [app_user.user for app_user in app_users]
         serializer = UserSerializer(users, many=True)
         return Response(paginate(request, serializer.data))
         
     def post(self, request):
+        data = request.DATA
         try:
-            #todo: update first_name, last_name and other attributes
-            stream = StringIO.StringIO(request.body)
-            data = JSONParser().parse(stream)
             username = data["username"]
             password = data["password"]
-            
-        except Exception as e:
-            self.logger.error("Unable to decode object. Error: %s"%str(e))
+        except KeyError as e:
             return Response({"error": "Invalid object."},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
-        app =  request.META['app']
         #todo: validate username and password
         user = User.objects.create_user(username = username, password = password)
-        new_user = AppUser(user = user, app = app)
+        new_user = AppUser(user = user, app = request.app)
         try:
             new_user.full_clean()
         except ValidationError as e:
             return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
         
         new_user.save()
-        user = authenticate(username=data["username"], password=data["password"])
+        user = authenticate(username=username, password=password)
         login(request, user)
         request.session.save()
         return Response({settings.SESSION_COOKIE_NAME : request.session.session_key,
@@ -58,9 +52,8 @@ class UserClassView(CloudAPIView):
                         status=status.HTTP_201_CREATED)
         
     def delete(self, request):
-        app = request.META['app']
         try:
-            users = AppUser.objects.filter(app = app)
+            users = AppUser.objects.filter(app = request.app)
             users.delete()
         except Exception:
             pass
@@ -72,19 +65,12 @@ class LoginView(CloudAPIView):
     logger = logging.getLogger("cloudengine")
     
     def post(self, request):
-        try:
-            credentials = json.loads(request.body)
-        except Exception, e:
-            self.logger.error("Unable to decode object. Error: %s"%str(e))
-            return Response({"error": "Invalid object."},
-                            status=status.HTTP_400_BAD_REQUEST,
-                            exception=True)
+        credentials  = request.DATA
         try:
             #make sure the user object has username and password
             username = credentials["username"]
             password = credentials["password"]
         except KeyError:
-            self.logger.error("Error: %s"%str(e))
             return Response({"error": "username/password field missing"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
@@ -114,8 +100,6 @@ class CurrentUserView(CloudAPIView):
     
     def get(self, request):
         user = request.user
-        print user.username
-        print type(user)
         if isinstance(user, AnonymousUser):
             return Response({"error": "user not logged in"})
         
@@ -132,14 +116,7 @@ class UserDetailView(CloudAPIView):
         return Response({"result": serializer.data})
     
     def put(self, request, id):
-        try:
-            stream = StringIO.StringIO(request.body)
-            data = JSONParser().parse(stream)
-        except Exception as e:
-            self.logger.error("Unable to decode object. Error: %s"%str(e))
-            return Response({"error": "Invalid object."},
-                            status=status.HTTP_400_BAD_REQUEST,
-                            exception=True)
+        data = request.DATA
         # If valid, update the user
         user = AppUser.objects.get(pk=id)
         for key in data.keys():

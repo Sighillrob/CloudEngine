@@ -18,11 +18,7 @@ manager = ClassesManager()
 class AppClassesView(CloudAPIView):
     
     def get(self, request):
-        app = request.META.get('app',"")
-        if not app:
-            return Response({'error': 'App id not provided'}, 
-                                    status=401)
-        app_classes = manager.get_classes(app.name)
+        app_classes = manager.get_classes(request.app.name)
         return Response(paginate(request, app_classes))
 
 
@@ -31,12 +27,7 @@ class ClassView(CloudAPIView):
     DEFAULT_QUERY = '{}'
 
     def get(self, request, cls):
-        app = request.META.get('app', None)
-        if not app:
-            return Response({'error': 'App id not provided'}, status=400)
-        # Django automatically urldecodes query string
-        query_str = request.GET.get('query', self.DEFAULT_QUERY)
-        logger.info("query string received: %s" % query_str)
+        query_str = request.QUERY_PARAMS.get('query', self.DEFAULT_QUERY)
         try:
             # urlparse the query
             query = json.loads(query_str)
@@ -60,7 +51,7 @@ class ClassView(CloudAPIView):
         except Exception, e:
             order_by = order = None
         try:
-            res = manager.get_class(app.name, cls, query, order_by, order)
+            res = manager.get_class(request.app.name, cls, query, order_by, order)
         except Exception, e:
             return Response({'error': str(e)},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -68,26 +59,12 @@ class ClassView(CloudAPIView):
         return Response(paginate(request, res))
 
     def delete(self, request, cls):
-        app = request.META.get('app', None)
-        if not app:
-            return Response({'error': 'App id not provided'}, status=400)
-        manager.delete_class( app.name, cls)
+        manager.delete_class( request.app.name, cls)
         return Response({"result" : "The class was deleted successfully"})
 
     def post(self, request, cls):
-        app = request.META.get('app', None)
-        if not app:
-            return Response({'error': 'App id not provided'}, status=400)
         try:
-            logger.debug("request body recieved: %s"%request.body)
-            new_obj = json.loads(request.body)
-        except Exception, e:
-            logger.error("Unable to decode object. Error: %s"%str(e))
-            return Response({"error": "Invalid object."},
-                            status=status.HTTP_400_BAD_REQUEST,
-                            exception=True)
-        try:
-            objid = manager.add_object(app.name, cls, new_obj)
+            objid = manager.add_object(request.app.name, cls, request.DATA)
         except InvalidObjectError:
             return Response({"error": "Invalid object"}, 
                             status= status.HTTP_400_BAD_REQUEST)
@@ -106,14 +83,9 @@ class ClassView(CloudAPIView):
 class ObjectView(CloudAPIView):
 
     def get(self, request, cls, objid):
-        logger.info("get request from %s for object %s" %
-                    (request.user.username, objid))
-        app = request.META.get('app', None)
-        if not app:
-            return Response({'error': 'App id not provided'}, status=400)
         try:
-            obj = manager.get_object(app.name, cls, objid)
-        except Exception, e:
+            obj = manager.get_object(request.app.name, cls, objid)
+        except Exception:
             return Response({"error": "Invalid object id"},
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
@@ -124,22 +96,10 @@ class ObjectView(CloudAPIView):
                             status=status.HTTP_400_BAD_REQUEST,
                             exception=True)
 
-    # todo: put should actually replace the existing objects
-    # since updating only a few fields does not affect the existing fields, in
-    # case the user wanted to delete a few fields. Android: Object.remove()
     # todo: _id cannot be updated by the request
     def put(self, request, cls, objid):
-        app = request.META.get('app', None)
-        if not app:
-            return Response({'error': 'App id not provided'}, status=400)
         try:
-            obj = json.loads(request.body)
-        except Exception:
-            return Response({"error": "Invalid object id"},
-                            status=status.HTTP_400_BAD_REQUEST,
-                            exception=True)
-        try:
-            manager.update_object(app.name, cls, objid, obj)
+            manager.update_object(request.app.name, cls, objid, request.DATA)
         except Exception as e:
                 return Response({
                     "error": "Invalid object. _id/app_id is a reserved field"},
@@ -149,23 +109,16 @@ class ObjectView(CloudAPIView):
                         status=200)
 
     def delete(self, request, cls, objid):
-        app = request.META.get('app', None)
-        if not app:
-            return Response({'error': 'App id not provided'}, status=400)
-        manager.delete_object(app.name, cls, objid)
+        manager.delete_object(request.app.name, cls, objid)
         return Response({"result": "Object deleted successfully"})
-
 
 
 
 class SchemaView(CloudAPIView):
     
     def get(self, request, cls):
-        app = request.META.get('app', None)
-        if not app:
-            return Response({'error': 'App id not provided'}, status=400)
         schema_handler = SchemaHandler()
-        schema = schema_handler.get_class_schema(app.name, cls)
+        schema = schema_handler.get_class_schema(request.app.name, cls)
         return Response(schema)
         
         

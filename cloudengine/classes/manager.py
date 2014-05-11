@@ -68,7 +68,6 @@ class SchemaHandler(object):
                     schema_modified[key] = curr_type
             
             if schema_modified:
-                print "updating schema"
                 collection.update({"_collection": klass},
                               {"$set": schema_modified})
         else:
@@ -81,7 +80,6 @@ class SchemaHandler(object):
                 schema[key] = curr_type
             
             schema["_collection"] = klass
-            print "inserting schema"
             collection.insert(schema)
             
         return True

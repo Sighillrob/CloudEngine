@@ -39,8 +39,6 @@ class AppFilesView(TemplateView):
                 }
     
     def post(self, request, *args, **kwargs):
-        # validate app name
-        print "post file request received"
         myfile = request.FILES.get("file", None)
         app = request.POST.get("app", "")
         appobj = self.is_validapp(app)
@@ -53,13 +51,10 @@ class AppFilesView(TemplateView):
         
         if error_msg:
             self.msg = error_msg
-            print "error is request: %s"%error_msg
-            #return self.get(request, *args, **kwargs)
             return redirect('cloudengine-app-files')
 
         filename = self.clean_filename(myfile.name)
         try:
-            print "attempting to upload file"
             self.manager.save(filename, myfile, appobj)
             self.msg = "File uploaded successfully!"
         except FileTooLarge as e:

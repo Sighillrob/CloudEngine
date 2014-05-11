@@ -28,7 +28,7 @@ class CloudAPIView(APIView):
         except CloudApp.DoesNotExist:
             # invalid app id
             raise AuthenticationFailed('Invalid App ID.')
-        request.META['app'] = app
+        request.app = app
 
     def get_app_header(self, request):
         auth = request.META.get('HTTP_APPID', b'')

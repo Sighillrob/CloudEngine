@@ -11,8 +11,7 @@ from cloudengine.push.models import PushNotification
 class PushSubscribers(CloudAPIView):
 
     def get(self, request):
-        app = request.META['app']
-        channel = app.name
+        channel = request.app.name
         count = get_subscriber_count(channel)
         return Response({"result": count})
 
@@ -20,22 +19,15 @@ class PushSubscribers(CloudAPIView):
 class PushAPIView(CloudAPIView):
 
     def post(self, request):
-        app = request.META['app']
-        user = request.user.username
-        channel = app.name
+        channel = request.app.name
         count = get_subscriber_count(channel)
         try:
-            body = json.loads(request.body)
-            message = body["message"]
-        except Exception:
-            # body is probably urlencoded
-            try:
-                message = request.POST['message']
-            except Exception:
-                return Response("Invalid request. Check request format",
-                                status=status.HTTP_400_BAD_REQUEST)
+            message = request.DATA["message"]
+        except KeyError:
+            return Response({"error": "Invalid message format"},
+                            status = status.HTTP_400_BAD_REQUEST)
 
         push_to_channel(channel, message)
-        notification = PushNotification(app=app, num_subscribers=count)
+        notification = PushNotification(app=request.app, num_subscribers=count)
         notification.save()
-        return Response({"result": count})
+        return Response({"result": "Notification sent to %d subscriber(s)"%count})
