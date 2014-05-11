@@ -1,25 +1,24 @@
 CloudEngine
 ===========
 
-**Open source backend stack for mobile.**
+**Open source backend for mobile.**
 
 
 Overview
 =========
 
-CloudEngine is an open source backend stack for building awesome mobile apps.
+CloudEngine is an open source backend for building awesome mobile apps built using Python and django.
 The aim of the project is to help mobile app developers get their apps off the ground
-as quickly as possible. For this, CloudEngine needs to provide all the basic services
-required for building rich mobile apps out-of-the-box. Currently there are bare minimum
-services included. The aim is also to create fully customizable and extensible framework for
-building backend mobile services. The core services could be tightly coupled.
+as quickly as possible. For this, CloudEngine provides basic services
+required for building rich mobile apps out-of-the-box. The aim is also to create fully 
+customizable and extensible framework for
+building backend mobile services.
 
 
 Requirements
 =============
 CloudEngine runs only on gunicorn server and hence currently runs only
-on UNIX environments. For development purposes, you can use django's builtin webserver
-and run the stack on Windows as well.
+on UNIX environments. For development purposes, you can use django's builtin webserver.
 
 * Python (2.7.5+)
 * Django (1.5.4+)
@@ -31,15 +30,15 @@ All the python library dependencies are listed in `requirements.txt`
 Installation
 ===============
 
-Create a virtualenv namespace and activate it.
+It is recommended that you create a virtualenv namespace and activate it before installing
+CloudEngine and its dependencies.
 
 	virtualenv myenv
 	cd myenv
 	source bin/activate
 
-You can install CloudEngine using pip. You can also grab the source distributions as well as windows and mac installers from the 
-[project homepage][projectpage]. On Windows, CloudEngine will be installed without support for gevent-socketio 
-and gunicorn (i.e. you can't test push notifications and related features).
+You can install CloudEngine using pip. You can also grab the source distributions from the 
+[project homepage][projectpage].
 
 	pip install cloudengine	
 
@@ -49,8 +48,7 @@ Create a new django project (myproject)
 	django-admin.py startproject myproject
 
 Configure database and other necessary 
-settings in your project's `settings.py`. If you've had trouble installing MySQL-python, you can 
-skip using MySQL and use sqlite3 or PostgreSQL instead (you'll need install Psycopg for PostgreSQL)
+settings in your project's `settings.py`.
 
 Add the following settings to `settings.py`
 make sure your SECRET_KEY is a random secret string
@@ -72,7 +70,14 @@ make sure your SECRET_KEY is a random secret string
 	    # or allow read-only access for unauthenticated users.
 	    'DEFAULT_PERMISSION_CLASSES': [
 	        'rest_framework.permissions.IsAuthenticated',
-	    ]
+	    ],
+	    
+	    DEFAULT_PARSER_CLASSES': (
+	        'rest_framework.parsers.JSONParser',
+	        'rest_framework.parsers.FormParser',
+	        'rest_framework.parsers.MultiPartParser',
+	        'rest_framework.parsers.FileUploadParser',
+    	)
 	}
 
 	
