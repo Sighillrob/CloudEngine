@@ -91,8 +91,8 @@ If you want to use Amazon S3 as your primary file storage service, also add the 
 	# By default files are uploaded to amazon S3 buckets
 	DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-	# The name of the directory that users will upload the files to
-	REMOTE_FILES_DIR = 'root'
+	# The name of the directory that your app files will be uploaded to
+	REMOTE_FILES_DIR = ''
 	
 	# AWS Credentials
 	AWS_ACCESS_KEY_ID = ""
@@ -149,15 +149,13 @@ Technical Overview
 
 CloudEngine is a pure Python django stack. Each backend service is plugged in as django
 app. Each service should be independently pluggable and usable except the core services. 
-Currently some of the services are tightly coupled. CloudEngine currently runs on gunicorn
+CloudEngine currently runs on gunicorn
 server and hence runs only on UNIX environments. CloudEngine uses the excellent
 [gevent-socketio][gevent-socketio] library for implementing real time communication
 channels, which are the basis of current push notifications system. 
 gevent-socketio is the python port of the popular [socket.io][socket.io] library. 
-For storage we use a combination of relational database (MySQL, PostgreSQL) and a
-NoSQL db (Currently mongodb). Ideally, we'd like to move completely to a NoSQL db.
-But we want to leverage a lot of django goodies and there is no elegant way to retain 
-that while migrating to NoSQL. CloudEngine uses [django-rest-framework][django-rest] for providing
+For storage we use a combination of relational database (MySQL/ PostgreSQL) and a
+NoSQL db (Currently mongodb). CloudEngine uses [django-rest-framework][django-rest] for providing
 REST interfaces to services.
 
 
