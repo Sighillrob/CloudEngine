@@ -246,8 +246,4 @@ class ClassesManager(object):
         
     def delete_app_data(self, db):
         db = validate_db_name(db)
-        db = self.client[db]
-        collections = db.collection_names(include_system_collections=False)
-        for collection in collections:
-            col = db[collection]
-            col.remove()
+        self.client.drop_database(db)
