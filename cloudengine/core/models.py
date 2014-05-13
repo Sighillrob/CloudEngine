@@ -6,7 +6,6 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from cloudengine.auth.models import Token
-from cloudengine.classes.manager import ClassesManager
 
 
 class CloudApp(models.Model):
@@ -25,11 +24,6 @@ class CloudApp(models.Model):
     
     def __str__(self):
         return unicode(self.name)
-    
-    def delete(self):                   # todo: better way to hook relation into app classes?
-        manager = ClassesManager()
-        manager.delete_app_data(self.name)
-        super(CloudApp, self).delete()
 
 
 class CloudAPI(models.Model):
