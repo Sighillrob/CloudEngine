@@ -39,5 +39,10 @@ class CloudAPIView(APIView):
 
     def log_request(self, request):
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
-        api = CloudAPI(time=now, api=request.path)
+        try:
+            api = CloudAPI.objects.get(app = request.app, date=now.date())
+            api.count += 1
+        except CloudAPI.DoesNotExist:
+            api = CloudAPI(count = 1, app = request.app)
+        
         api.save()

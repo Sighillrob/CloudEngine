@@ -27,8 +27,10 @@ class CloudApp(models.Model):
 
 
 class CloudAPI(models.Model):
-    time = models.DateTimeField()
-    api = models.CharField(max_length=200)
+    date = models.DateField(auto_now_add = True)
+    count = models.IntegerField()
+    app = models.ForeignKey(CloudApp)
+    
 
 
 class AppSettings(models.Model):
