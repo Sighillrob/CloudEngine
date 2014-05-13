@@ -43,6 +43,6 @@ class CloudAPIView(APIView):
             api = CloudAPI.objects.get(app = request.app, date=now.date())
             api.count += 1
         except CloudAPI.DoesNotExist:
-            api = CloudAPI(count = 1, app = request.app)
+            api = CloudAPI(count = 1, app = request.app, date = now.date())
         
         api.save()

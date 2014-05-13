@@ -27,7 +27,7 @@ class CloudApp(models.Model):
 
 
 class CloudAPI(models.Model):
-    date = models.DateField(auto_now_add = True)
+    date = models.DateField()
     count = models.IntegerField()
     app = models.ForeignKey(CloudApp)
     
@@ -46,6 +46,11 @@ Create a single API authentication token once for the admin.
 '''
 @receiver(post_save, sender=User)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if instance.is_superuser:
+    if not instance.is_superuser:
+        return
+    try:
+        Token.objects.all()
+        return 
+    except Token.DoesNotExist:
         token = Token.objects.create()
         token.save()

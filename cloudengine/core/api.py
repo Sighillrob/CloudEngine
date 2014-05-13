@@ -1,3 +1,4 @@
+from datetime import timedelta, datetime
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -5,6 +6,9 @@ from cloudengine.core.models import CloudApp
 from cloudengine.classes.manager import ClassesManager
 from cloudengine.files.utils import delete_app_files
 from cloudengine.core.utils import paginate
+from django.utils.timezone import utc
+from cloudengine.core.models import CloudAPI
+from serializers import CloudAPISerializer
 
 # View for creating new apps
 class AppView(APIView):
@@ -46,3 +50,25 @@ class AppListView(APIView):
                 new_app[prop] = getattr(app, prop)
             app_list.append(new_app)
         return Response(paginate(request, app_list))
+
+
+
+class APICallView(APIView):
+    
+    def get(self, request):
+        now = datetime.utcnow().replace(tzinfo=utc)
+        today = now.date()
+        one_month = timedelta(days=30)
+        one_month_back = today - one_month
+        try:
+            res = CloudAPI.objects.filter(date__gt = one_month_back)
+        except CloudAPI.DoesNotExist:
+            res = []
+        serializer = CloudAPISerializer(res, many = True)
+        return Response(serializer.data)
+        
+        
+        
+        
+        
+        
