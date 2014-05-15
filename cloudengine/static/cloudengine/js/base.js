@@ -135,16 +135,6 @@ function update_apps_list($scope, $store){
 }
 
 
-function update_session_app($scope, $store){
-	
-	  $my_session_app = $store.get("session_app");
-	  
-	  if(($my_session_app != undefined) ||($my_session_app!=null)){
-		  if($scope.apps.length > 0){
-			  $scope.selectApp($my_session_app);
-		  }
-	  }
-}
 
 
 
