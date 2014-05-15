@@ -19,7 +19,7 @@ class FilesManager(object):
         
         if uploaded_file.size > settings.MAX_FILESIZE:
             raise FileTooLarge()
-        cloudfile = self.backend.upload(filename, uploaded_file, appobj)
+        cloudfile = self.backend.save(filename, uploaded_file, appobj)
         return cloudfile
         
     def delete(self, filename, app):

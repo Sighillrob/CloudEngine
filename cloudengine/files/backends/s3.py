@@ -11,7 +11,7 @@ from boto.s3.connection import S3Connection
 class S3Storage(BaseFileStorage):
     '''Amazon S3 storage for app file uploads'''
     
-    def upload(self, filename, content, app):
+    def save(self, filename, content, app):
         
         new_file = CloudFile(name=filename, app=app)
         conn = S3Connection(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
