@@ -7,6 +7,7 @@ from cloudengine.core.forms import CreateAppForm
 from cloudengine.core.models import CloudApp, CloudAPI
 from cloudengine.auth.models import Token
 from cloudengine.push.models import PushNotification
+from cloudengine.users.models import AppUser
 
 
 class AccountKeysView(TemplateView):
@@ -48,10 +49,10 @@ class AdminHomeView(TemplateView):
             res = []
         n_push = reduce(lambda x, y: x + y.num_subscribers, res, 0)
         
-        res = AppUser.objects.filter(send_time__gt = datetime(one_month_back))
+        users = AppUser.objects.all()
             
         return {'n_apps': len(apps), 'n_api' : n_api,
-                'n_push': n_push, }
+                'n_push': n_push, 'n_users': len(users)}
 
 
 class CreateAppView(TemplateView):
