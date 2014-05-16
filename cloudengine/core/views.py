@@ -1,10 +1,13 @@
-
+from datetime import datetime, timedelta
 from django.views.generic import TemplateView
 from django.core.context_processors import csrf
+from django.utils.timezone import utc
 from django.http import HttpResponse
 from cloudengine.core.forms import CreateAppForm
-from cloudengine.core.models import CloudApp
+from cloudengine.core.models import CloudApp, CloudAPI
 from cloudengine.auth.models import Token
+from cloudengine.push.models import PushNotification
+
 
 class AccountKeysView(TemplateView):
 
@@ -24,8 +27,31 @@ class AdminHomeView(TemplateView):
     template_name = 'admin_home.html'
     
     def get_context_data(self):
-        apps = CloudApp.objects.all()
-        return {'apps': apps}
+        try:
+            apps = CloudApp.objects.all()
+        except CloudApp.DoesNotExist:
+            return {}
+        
+        now = datetime.utcnow().replace(tzinfo=utc)
+        today = now.date()
+        one_month = timedelta(days=30)
+        one_month_back = today - one_month
+        try:
+            res = CloudAPI.objects.filter(date__gt = one_month_back)
+        except CloudAPI.DoesNotExist:
+            res = []
+        n_api = reduce(lambda x, y: x + y.count, res, 0)
+        
+        try:
+            res = PushNotification.objects.filter(send_time__gt = one_month_back)
+        except CloudAPI.DoesNotExist:
+            res = []
+        n_push = reduce(lambda x, y: x + y.num_subscribers, res, 0)
+        
+        res = AppUser.objects.filter(send_time__gt = datetime(one_month_back))
+            
+        return {'n_apps': len(apps), 'n_api' : n_api,
+                'n_push': n_push, }
 
 
 class CreateAppView(TemplateView):
