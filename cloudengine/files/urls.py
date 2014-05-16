@@ -15,7 +15,7 @@ urlpatterns = patterns('',
                           name="cloudengine-app-files"),
                        url(r'^upload/$', admin_view(AppFilesView.as_view()),
                            name="cloudengine-app-files-upload"),
-                       url(r'^download/(?P<appname>[a-zA-Z0-9]+)/(?P<filename>[a-zA-Z0-9_\.]+)/$', 
+                       url(r'^download/(?P<appname>[a-zA-Z0-9]+)/(?P<filename>.+)/$', 
                            admin_view(download_file),
                            name="cloudengine-download-file"),
                        )

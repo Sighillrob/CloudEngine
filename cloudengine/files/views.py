@@ -1,5 +1,5 @@
 import mimetypes
-import logging
+import logging, urllib
 from models import CloudFile
 from exceptions import FileTooLarge, FileNotFound
 from manager import FilesManager
@@ -48,14 +48,12 @@ class AppFilesView(TemplateView):
         elif not appobj:
             error_msg = "Please select an app before uploading file."
         
-        
         if error_msg:
             self.msg = error_msg
             return redirect('cloudengine-app-files')
 
-        filename = self.clean_filename(myfile.name)
         try:
-            self.manager.save(filename, myfile, appobj)
+            self.manager.save(myfile.name, myfile, appobj)
             self.msg = "File uploaded successfully!"
         except FileTooLarge as e:
             self.msg = str(e)
@@ -70,14 +68,13 @@ class AppFilesView(TemplateView):
             return CloudApp.objects.get(name=app)
         except CloudApp.DoesNotExist:
             return False
-
-    def clean_filename(self, name):
-        return name.replace(' ', '-')
     
 
 def download_file(request, appname, filename):
-    usr = request.user.username
     manager = FilesManager()
+    print filename
+    filename = urllib.unquote(filename)
+    print filename
     try:
         app = CloudApp.objects.get(name=appname)
     except CloudApp.DoesNotExist:

@@ -13,12 +13,3 @@ class CloudFile(models.Model):
     url = models.CharField(max_length=2000, blank=True)
     size = models.BigIntegerField()
     app = models.ForeignKey(CloudApp)
-'''    
-    def save(self, *args, **kwargs):
-        path = get_upload_loc(self, self.name)
-        loc = os.path.split(path)[0]
-        if not os.path.exists(loc):
-            raise Exception("Unable to save file to %s"%path)
-        
-        super(CloudFile, self).save(*args, **kwargs)
-'''
