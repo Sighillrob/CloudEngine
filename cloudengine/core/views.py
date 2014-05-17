@@ -31,7 +31,8 @@ class AdminHomeView(TemplateView):
         try:
             apps = CloudApp.objects.all()
         except CloudApp.DoesNotExist:
-            return {}
+            return {'n_apps': 0, 'n_api' : 0,
+                'n_push': 0, 'n_users': 0}
         
         now = datetime.utcnow().replace(tzinfo=utc)
         today = now.date()
@@ -49,7 +50,10 @@ class AdminHomeView(TemplateView):
             res = []
         n_push = reduce(lambda x, y: x + y.num_subscribers, res, 0)
         
-        users = AppUser.objects.all()
+        try:
+            users = AppUser.objects.all()
+        except AppUser.DoesNotExist:
+            users = []
             
         return {'n_apps': len(apps), 'n_api' : n_api,
                 'n_push': n_push, 'n_users': len(users)}
