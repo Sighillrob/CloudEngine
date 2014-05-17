@@ -46,9 +46,7 @@ Create a single API authentication token once for the admin.
 '''
 @receiver(post_save, sender=User)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
-    try:
-        Token.objects.all()
-        return 
-    except Token.DoesNotExist:
+    token = Token.objects.all()
+    if not token:
         token = Token.objects.create()
         token.save()

@@ -28,9 +28,8 @@ class AdminHomeView(TemplateView):
     template_name = 'admin_home.html'
     
     def get_context_data(self):
-        try:
-            apps = CloudApp.objects.all()
-        except CloudApp.DoesNotExist:
+        apps = CloudApp.objects.all()
+        if not apps:
             return {'n_apps': 0, 'n_api' : 0,
                 'n_push': 0, 'n_users': 0}
         
@@ -50,10 +49,7 @@ class AdminHomeView(TemplateView):
             res = []
         n_push = reduce(lambda x, y: x + y.num_subscribers, res, 0)
         
-        try:
-            users = AppUser.objects.all()
-        except AppUser.DoesNotExist:
-            users = []
+        users = AppUser.objects.all()
             
         return {'n_apps': len(apps), 'n_api' : n_api,
                 'n_push': n_push, 'n_users': len(users)}
