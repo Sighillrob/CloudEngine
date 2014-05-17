@@ -2,8 +2,9 @@ import logging
 from django.http import HttpRequest
 from rest_framework.views import APIView
 from cloudengine.socketio.namespace import BaseNamespace
-from rest_framework import HTTP_HEADER_ENCODING
 from cloudengine.core.models import CloudApp
+from rest_framework import HTTP_HEADER_ENCODING
+from rest_framework import exceptions
 
 all_channels = {}
 
@@ -48,30 +49,37 @@ class DefaultNamespace(BaseNamespace, UserChannelMixin):
 
     def initialize(self):
         self.logger = logging.getLogger("cloudengine")
-        auth_id = self.authenticate_request()
+        
+        try:
+            self.authenticate_request()
+        except exceptions.AuthenticationFailed:
+            self.logger.info("user not authenticated in socketio:initialize")
+            return
+        
         environ = self.socket.handshake_environ
         app_id = environ.get('HTTP_APPID', b'')
         if isinstance(app_id, str):
             # Work around django test client oddness
             app_id = app_id.encode(HTTP_HEADER_ENCODING)
 
-        if auth_id and app_id:
-            self.logger.info("initializing socketio for user %s" % auth_id)
-            self.lift_acl_restrictions()
-            app = CloudApp.objects.get(pk=app_id)
-            self.channel = app.name
-            #self._objects[id(self)] = self
-            # currently every user is automatically subscribed to the default
-            # channel
-            self.subscribe(self.channel)
-            if self.channel in all_channels.keys():
-                all_channels[self.channel].append(self.socket)
-            else:
-                all_channels[self.channel] = [self.socket]
-            self.emit('connect')
-        else:
-            self.logger.info("user not authenticated in socketio:initlaize")
+        if not app_id:
+            self.logger.info("app id missing in socketio request")
             return
+        
+        self.logger.info("initializing socketio")
+        self.lift_acl_restrictions()
+        app = CloudApp.objects.get(pk=app_id)
+        self.channel = app.name
+        #self._objects[id(self)] = self
+        # currently every user is automatically subscribed to the default
+        # channel
+        self.subscribe(self.channel)
+        if self.channel in all_channels.keys():
+            all_channels[self.channel].append(self.socket)
+        else:
+            all_channels[self.channel] = [self.socket]
+        self.emit('connect')
+        
 
     def on_subscribe(self):
         self.logger.info("subscibing on channel %s" % self.channel)
@@ -84,8 +92,8 @@ class DefaultNamespace(BaseNamespace, UserChannelMixin):
     # request = saved request from previous call for session authentication
     def authenticate_request(self):
         auth_id = self.perform_authentication(self.request)
-        if auth_id:
-            return auth_id
+        if not auth_id:
+            raise exceptions.AuthenticationFailed()
         # try token authentication
         req = HttpRequest()
         req.META = self.socket.handshake_environ
@@ -97,7 +105,7 @@ class DefaultNamespace(BaseNamespace, UserChannelMixin):
         myview = APIView()
         init_request = myview.initialize_request(request)
         myview.perform_authentication(init_request)
-        return init_request.user.username
+        
 
     def get_initial_acl(self):
         return []
