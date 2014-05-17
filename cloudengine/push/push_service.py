@@ -92,9 +92,10 @@ class DefaultNamespace(BaseNamespace, UserChannelMixin):
     # request = saved request from previous call for session authentication
     def authenticate_request(self):
         try:
+            # try session auth
             self.perform_authentication(self.request)
         except exceptions.AuthenticationFailed:
-        # try token authentication
+            pass    # try token authentication
         req = HttpRequest()
         req.META = self.socket.handshake_environ
         return self.perform_authentication(req)
