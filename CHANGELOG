@@ -1,0 +1,12 @@
+New in 0.4.0
+-----------------------------
+
+    * Paginated api results for listviews with the ability for clients 
+    to specify page size and turn off pagination.
+    * Improved auth for socketio calls
+    * Improved dashboard UI with stats
+    * Support for files with non-alphanumeric names
+    * Fixed tests and fixtures. No new test cases added.
+    * In-browser editing of data field in data browser.
+    * Added classes and objects delete support through data browser
+    * Schema validation layer for Data objects.
