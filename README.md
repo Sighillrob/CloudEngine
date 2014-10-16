@@ -30,7 +30,7 @@ All the python library dependencies are listed in `requirements.txt`
 Documentation & Support
 ========================
 
-Complete documentation is available at - http://getcloudengine.com/docs
+Complete documentation is available at - http://getcloudengine.net/docs
 
 For discussions, questions and support use the [Github issue tracking][issue-tracker]
 
@@ -47,4 +47,4 @@ See the LICENSE file for more info.
 [twitter]: https://twitter.com/thecloudengine
 [issue-tracker]: https://github.com/cloudengine/CloudEngine/issues
 [android-sdk]: https://github.com/cloudengine/Android-SDK
-[projectpage]: http://getcloudengine.com
+[projectpage]: http://getcloudengine.net
